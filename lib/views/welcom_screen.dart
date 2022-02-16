@@ -11,13 +11,19 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  String category = 'Select Category';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          FontAwesomeIcons.angleLeft,
-          color: Color(0xFF457B9D),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            FontAwesomeIcons.angleLeft,
+            color: Color(0xFF457B9D),
+          ),
         ),
         actions: const [
           Padding(
@@ -96,28 +102,65 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 45, left: 30, right: 30, bottom: 20),
-                    child: TextFormField(
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontSize: 14,
-                          ),
-                      decoration: InputDecoration(
-                        label: Text(
-                          'Select Category',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontSize: 14,
-                                  ),
-                        ),
-                        suffixIcon: const Icon(
-                          FontAwesomeIcons.angleDown,
-                          color: Color(0xFF457B9D),
-                        ),
-                        focusColor: const Color(0xFF1D3557),
-                        border: const OutlineInputBorder(
+                    child: DropdownButtonFormField<String>(
+                      value: category,
+                      icon: const Icon(
+                        FontAwesomeIcons.angleDown,
+                        color: Colors.black38,
+                      ),
+                      decoration: const InputDecoration(
+                        hintText: 'Select Your Gender',
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(7)),
                         ),
                       ),
+                      iconSize: 24,
+                      elevation: 0,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          category = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Select Category',
+                        'Category 1',
+                        'Category 2',
+                        'Category 3',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(fontSize: 14),
+                          ),
+                        );
+                      }).toList(),
                     ),
+                    // TextFormField(
+                    //   style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    //         fontSize: 14,
+                    //       ),
+                    //   decoration: InputDecoration(
+                    //     label: Text(
+                    //       'Select Category',
+                    //       style:
+                    //           Theme.of(context).textTheme.bodyText1!.copyWith(
+                    //                 fontSize: 14,
+                    //               ),
+                    //     ),
+                    //     suffixIcon: const Icon(
+                    //       FontAwesomeIcons.angleDown,
+                    //       color: Color(0xFF457B9D),
+                    //     ),
+                    //     focusColor: const Color(0xFF1D3557),
+                    //     border: const OutlineInputBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(7)),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 20),

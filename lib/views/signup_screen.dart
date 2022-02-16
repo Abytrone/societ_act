@@ -20,9 +20,14 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          FontAwesomeIcons.angleLeft,
-          color: Color(0xFF457B9D),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            FontAwesomeIcons.angleLeft,
+            color: Color(0xFF457B9D),
+          ),
         ),
         backgroundColor: const Color(0xFFF1FAEE),
         centerTitle: true,

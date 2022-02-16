@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:societ_act/screens/bottom_navy.dart';
-import 'package:societ_act/screens/location_screen.dart';
-import 'package:societ_act/screens/login_screen.dart';
-import 'package:societ_act/screens/onboarding_screen.dart';
-import 'package:societ_act/screens/signup_screen.dart';
-import 'package:societ_act/screens/welcom_screen.dart';
+import 'package:societ_act/views/bottom_navy.dart';
+import 'package:societ_act/views/location_screen.dart';
+import 'package:societ_act/views/login_screen.dart';
+import 'package:societ_act/views/onboarding_screen.dart';
+import 'package:societ_act/views/signup_screen.dart';
+import 'package:societ_act/views/welcom_screen.dart';
 import 'package:societ_act/utils/hexconvert.dart';
 
 void main() {

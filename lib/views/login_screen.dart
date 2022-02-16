@@ -31,7 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
               // width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height >= 843.4
                   ? MediaQuery.of(context).size.height - 200
-                  : MediaQuery.of(context).size.height,
+                  : MediaQuery.of(context).size.height < 843.4
+                      ? MediaQuery.of(context).size.height + 200
+                      : MediaQuery.of(context).size.height + 100,
               padding: const EdgeInsets.all(40),
               decoration:
                   const BoxDecoration(color: Color(0xFFEDF1F4), boxShadow: [
@@ -42,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               ]),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 // mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
