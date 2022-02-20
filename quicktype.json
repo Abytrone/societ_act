@@ -1,0 +1,20 @@
+{
+    "data": {
+        "id": "1",
+        "type": "User",
+        "attributes": [
+            {
+                "fullname": "Nurudeen Yahuza",
+                "username": "yahuza96",
+                "gender": "male",
+                "affiliated_with": "LightWave Ehealth Solution",
+                "user_type": "general",
+                "user_group": 1,
+                "email": "yahuzanurideen@gmail.com",
+                "email_verified_at": null,
+                "created_at": "2022-02-14T16:33:00.000000Z",
+                "updated_at": "2022-02-14T16:33:00.000000Z"
+            }
+        ]
+    }
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:societ_act/classes/posts_class.dart';
+import 'package:societ_act/models/posts_class.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final Post post;
@@ -16,9 +16,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          FontAwesomeIcons.angleLeft,
-          color: Color(0xFF457B9D),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            FontAwesomeIcons.angleLeft,
+            color: Color(0xFF457B9D),
+          ),
         ),
         actions: const [
           Padding(
@@ -59,7 +64,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       child: CircleAvatar(
                         maxRadius: 20,
                         minRadius: 20,
-                        child: Image.network(widget.post.userImage!),
+                        child: Image.network(widget.post.imageUrl!),
                       ),
                       // backgroundColor: Colors.blue,
                     ),
@@ -70,14 +75,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.post.fullname!,
+                          'Abdul-Basit Yahaya',
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         const SizedBox(
                           height: 3,
                         ),
                         Text(
-                          widget.post.username!,
+                          '@abytrone',
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     fontSize: 12,
@@ -87,8 +92,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 110,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width > 340 ? 90 : 110,
                   ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -101,7 +106,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Text(
-                  widget.post.postText!,
+                  widget.post.content!,
                   style: Theme.of(context).textTheme.bodyText2!.copyWith(
                         fontSize: 13,
                       ),
@@ -117,7 +122,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   image: DecorationImage(
                     fit: BoxFit.fill,
                     image: NetworkImage(
-                      widget.post.postImage!,
+                      widget.post.imageUrl!,
                       // scale: 10,
                     ),
                   ),
@@ -156,7 +161,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     padding: const EdgeInsets.only(
                         top: 5, bottom: 5, right: 30, left: 5),
                     child: Text(
-                      widget.post.likes!,
+                      widget.post.likes!.toString(),
                       style: Theme.of(context).textTheme.bodyText2!.copyWith(
                             fontSize: 12,
                             color: Colors.grey,
@@ -223,8 +228,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   child: CircleAvatar(
                                     maxRadius: 20,
                                     minRadius: 20,
-                                    child:
-                                        Image.network(widget.post.userImage!),
+                                    child: Image.network(widget.post.imageUrl!),
                                   ),
                                   // backgroundColor: Colors.blue,
                                 ),
@@ -236,7 +240,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      widget.post.fullname!,
+                                      'Abdul-Basit Yahaya',
                                       style:
                                           Theme.of(context).textTheme.bodyText2,
                                     ),
@@ -246,7 +250,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          widget.post.username!,
+                                          '@abytrone',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText2!
@@ -290,7 +294,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, left: 60),
                             child: Text(
-                              widget.post.postText!,
+                              widget.post.content!,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
@@ -316,7 +320,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 padding: const EdgeInsets.only(
                                     top: 5, bottom: 5, right: 30, left: 5),
                                 child: Text(
-                                  widget.post.likes!,
+                                  widget.post.likes!.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!

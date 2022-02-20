@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:societ_act/utils/primary_button.dart';
+import 'package:societ_act/views/widgets/primary_button.dart';
+import 'package:location/location.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({Key? key}) : super(key: key);
@@ -11,13 +12,49 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
+  LocationData? _userLocation;
+
+  Future<void> getUserLocation() async {
+    Location location = Location();
+
+    // Check if location service is enable
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    // Check if permission is granted
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    final _locationData = await location.getLocation();
+    setState(() {
+      _userLocation = _locationData;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          FontAwesomeIcons.angleLeft,
-          color: Color(0xFF457B9D),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            FontAwesomeIcons.angleLeft,
+            color: Color(0xFF457B9D),
+          ),
         ),
         actions: const [
           Padding(
@@ -139,26 +176,32 @@ class _LocationScreenState extends State<LocationScreen> {
                               backgroundColor: Color(0xFF1D3557),
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text('Use my current location'),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8, top: 4),
-                                child: Text(
-                                  'Labadi Beach',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .copyWith(
-                                        color: Colors.black26,
-                                      ),
+                          InkWell(
+                            onTap: () {
+                              getUserLocation();
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Text('Use my current location'),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, top: 4),
+                                  child: Text(
+                                    'Latitude: ${_userLocation?.latitude}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                          color: Colors.black26,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

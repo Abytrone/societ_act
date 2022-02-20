@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>societ_act</string>
+	<string>Societ Act</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -26,6 +26,20 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
+	<!-- This is where I pasted the Location Services -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Societ Act will like to know your location</string>
+
+	<!-- // Deprecated, use NSLocationAlwaysAndWhenInUseUsageDescription instead. -->
+	<!-- <key>NSLocationAlwaysUsageDescription</key> -->
+
+	<!-- // Use this very carefully. This key is required only if your iOS app
+	// uses APIs that access the user’s location information at all times,
+	// even if the app isn't running. -->
+	<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key> -->
+
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

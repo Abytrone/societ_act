@@ -1,9 +1,9 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:societ_act/screens/home_screen.dart';
-import 'package:societ_act/screens/messages_screen.dart';
-import 'package:societ_act/screens/notification_screen.dart';
-import 'package:societ_act/screens/search_screen.dart';
+import 'package:societ_act/views/home_screen.dart';
+import 'package:societ_act/views/messages_screen.dart';
+import 'package:societ_act/views/notification_screen.dart';
+import 'package:societ_act/views/search_screen.dart';
 
 class BottomNavy extends StatefulWidget {
   const BottomNavy({Key? key}) : super(key: key);

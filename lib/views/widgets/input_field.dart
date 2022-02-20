@@ -13,7 +13,7 @@ class InputField extends StatelessWidget {
       required this.obscureText,
       required this.textCapitalization,
       // this.deco,
-      this.validate,
+      this.validator,
       this.maxLines,
       this.enabled})
       : super(key: key);
@@ -26,7 +26,7 @@ class InputField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final TextCapitalization textCapitalization;
-  final String? Function(String?)? validate;
+  final String? Function(String?)? validator;
   final int? maxLines;
   final bool? enabled;
 
@@ -39,9 +39,14 @@ class InputField extends StatelessWidget {
         controller: controller,
         textCapitalization: textCapitalization,
         obscureText: obscureText,
-        validator: validate,
+        validator: validator,
         enabled: enabled,
         decoration: InputDecoration(
+          errorStyle: GoogleFonts.comfortaa(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFFE63946),
+          ),
           label: Text(
             label,
             style: GoogleFonts.comfortaa(

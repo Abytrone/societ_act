@@ -11,12 +11,23 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
+  void initState() {
+    // print();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          FontAwesomeIcons.angleLeft,
-          color: Color(0xFF457B9D),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            FontAwesomeIcons.angleLeft,
+            color: Color(0xFF457B9D),
+          ),
         ),
         actions: const [
           Padding(
@@ -276,7 +287,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 340,
+                    width: MediaQuery.of(context).size.width > 340 ? 300 : 340,
                     height: 200,
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),

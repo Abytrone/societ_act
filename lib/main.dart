@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:societ_act/screens/bottom_navy.dart';
-import 'package:societ_act/screens/location_screen.dart';
-import 'package:societ_act/screens/login_screen.dart';
-import 'package:societ_act/screens/onboarding_screen.dart';
-import 'package:societ_act/screens/signup_screen.dart';
-import 'package:societ_act/screens/welcom_screen.dart';
-import 'package:societ_act/utils/hexconvert.dart';
+import 'package:societ_act/views/bottom_navy.dart';
+import 'package:societ_act/views/location_screen.dart';
+import 'package:societ_act/views/login_screen.dart';
+import 'package:societ_act/views/onboarding_screen.dart';
+import 'package:societ_act/views/signup_screen.dart';
+import 'package:societ_act/views/welcom_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,9 +26,9 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: TextTheme(
           headline1: GoogleFonts.comfortaa(
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
               fontSize: 40,
-              color: '1D3557'.toColor(),
+              color: Color(0xFF1D3557),
               fontWeight: FontWeight.w800,
             ),
           ),
