@@ -29,6 +29,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Image.asset(
               //   'assets/icon/caution.png',

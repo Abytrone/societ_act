@@ -330,15 +330,19 @@ class Comment {
         userId: json["user_id"],
         comment: json["comment"],
         message: json["comment"],
-        createdAt: DateTime.parse(json["created_at"]),
-        user: List<CommentUser>.from(
-            json["user"].map((x) => CommentUser.fromJson(x))),
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        user: json["user"] == null
+            ? null
+            : List<CommentUser>.from(
+                json["user"].map((x) => CommentUser.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "user_id": userId,
         "comment": comment,
-        "created_at": createdAt!.toIso8601String(),
+        "created_at": createdAt,
         "user": List<dynamic>.from(user!.map((x) => x.toJson())),
       };
 }

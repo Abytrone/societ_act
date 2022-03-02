@@ -37,7 +37,7 @@ class _LocationScreenState extends State<LocationScreen> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           child: const Icon(
             FontAwesomeIcons.angleLeft,

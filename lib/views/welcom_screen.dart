@@ -64,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           child: const Icon(
             FontAwesomeIcons.angleLeft,
@@ -180,8 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             options: Options(headers: {
                               'Accept': '*/*',
                               'Content-Type': 'application/json',
-                              'Authorization':
-                                  'Bearer 63|aaPLpYT6EO4u7KkwPEXqd5JLgo6vYADykeXTLUzR'
+                              'Authorization': 'Bearer $token'
                             }));
                         var models =
                             Category.fromJsonList(response.data['data']);
