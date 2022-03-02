@@ -77,7 +77,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
               child: Text(
                 'Cancel',
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF457B9D),
                     ),
@@ -469,7 +469,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                               textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
                                 hintText:
-                                    'Let the world know the issue you care about\n\n\n\n\n\n\n\n\n\n\n',
+                                    'Let the world know the issue you care about...\n\n\n\n\n\n\n\n\n\n\n',
                                 hintStyle: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
@@ -518,7 +518,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(10)),
                                   image: DecorationImage(
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     image: Image.file(
                                       _file!,
                                     ).image,

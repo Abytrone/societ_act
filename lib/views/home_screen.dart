@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         } else {
                           return Container(
-                            height: 350,
+                            height: 370,
                             width: 400,
                             padding: const EdgeInsets.all(8),
                             margin: const EdgeInsets.all(5),

@@ -146,36 +146,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Partner:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
+                        widget.user.data.group == null
+                            ? Container()
+                            : Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Partner:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 15,
+                                          ),
                                     ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                '${widget.user.data.group}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
+                                    const SizedBox(
+                                      width: 8,
                                     ),
+                                    Text(
+                                      '${widget.user.data.group}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 15,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: Row(
@@ -281,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                         const SizedBox(
@@ -292,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                         const SizedBox(
@@ -303,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                         const SizedBox(
@@ -314,7 +316,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                         const SizedBox(
@@ -325,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                         const SizedBox(
@@ -336,14 +338,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                   ),
                         ),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 20, left: 10, right: 10),
                     child: SizedBox(
                       height: 0.5,
                       child: Container(
@@ -401,7 +404,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    padding: const EdgeInsets.only(left: 20, bottom: 50),
                     child: Row(
                       children: [
                         const Icon(

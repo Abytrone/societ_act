@@ -1,17 +1,11 @@
-import 'dart:convert' as convert;
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:another_flushbar/flushbar.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:societ_act/models/case_class.dart';
 import 'package:societ_act/models/location_class.dart';
 import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/services/server.dart';
-import 'package:societ_act/views/search_cases_screen.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -36,8 +30,6 @@ class _LocationScreenState extends State<LocationScreen> {
   final RemoteServices service = RemoteServices();
   String? location = '';
   int? locationID = 0;
-
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -208,9 +200,17 @@ class _LocationScreenState extends State<LocationScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8),
-                                  child: Text('Please select location above'),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: Text(
+                                    'Please select location above',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                          fontSize: 13,
+                                        ),
+                                  ),
                                 ),
                                 Padding(
                                   padding:

@@ -36,11 +36,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
               // ),
               Text(
                 'Are you sure?',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodyText2,
               ),
               Text(
                 'You want to logout of the system?',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodyText2,
               ),
             ],
           ),
