@@ -14,15 +14,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            FontAwesomeIcons.angleLeft,
-            color: Color(0xFF457B9D),
-          ),
-        ),
         actions: const [
           Padding(
             padding: EdgeInsets.all(8.0),

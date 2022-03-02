@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:societ_act/controllers/radiobutton_controller.dart';
 import 'package:societ_act/models/error_class.dart';
 import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/server.dart';
+import 'package:societ_act/views/bottom_navy.dart';
 import 'package:societ_act/views/widgets/input_field.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
@@ -468,9 +470,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           text: 'Sign-up',
                           onTap: () async {
                             if (formKey!.currentState!.validate()) {
-                              // signup();
+                              signup();
                             }
-                            Navigator.of(context).pushNamed('welcome');
                           },
                         )
                       : const Center(
@@ -519,15 +520,15 @@ class _SignupScreenState extends State<SignupScreen> {
             _isLoading = false;
           });
           var userData = User.fromJson(jsonResponse);
-          print(userData.data.group.toString());
-          // SharedPreferences localStorage =
-          //     await SharedPreferences.getInstance();
-          // localStorage.setString('token', userData.token!);
-          // localStorage.setString('user', jsonEncode(userData.data));
+          SharedPreferences localStorage =
+              await SharedPreferences.getInstance();
+          localStorage.setString('token', userData.token!);
+          localStorage.setString('user', jsonEncode(userData));
+          Navigator.of(context).pushNamed('welcome');
 
           // Navigator.of(context).pushReplacement(
           //   PageRouteBuilder(
-          //     pageBuilder: (_, __, ___) => new BottomNavy(),
+          //     pageBuilder: (_, __, ___) => const BottomNavy(),
           //   ),
           // );
           await Flushbar(
@@ -548,7 +549,7 @@ class _SignupScreenState extends State<SignupScreen> {
               _isLoading = false;
             });
             await Flushbar(
-              message: 'Server cannot reached at the moment!',
+              message: 'Request failed with code: ${response.statusCode}',
               icon: const Icon(
                 Icons.info_outline,
                 size: 28.0,

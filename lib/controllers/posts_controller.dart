@@ -4,33 +4,29 @@ import 'package:societ_act/services/remote_services.dart';
 
 class PostsController extends GetxController {
   var isLoading = true.obs;
-  var postList = <Post>[].obs;
+  var postsList = <Datum>[].obs;
 
   @override
   void onInit() {
-    fetchProducts();
+    fetchPosts();
     super.onInit();
   }
 
-  void fetchProducts() async {
+  void fetchPosts() async {
     try {
       isLoading(true);
-      var post = await RemoteServices.fetchProducts();
-      if (post != null) {
-        postList.value = post;
-      }
+      // var posts = await RemoteServices.fetchPosts();
+
+      // for (var i in posts!.data) {
+      //   Datum post = Datum(
+      //     id: i.id,
+      //     type: i.type,
+      //     attributes: i.attributes,
+      //   );
+      //   postsList.add(post);
+      // }
     } finally {
       isLoading(false);
     }
   }
-
-  // Post(
-  //   fullname: '',
-  //   username: '',
-  //   userImage: '',
-  //   postImage: '',
-  //   postText: '',
-  //   postTitle: '',
-  //   likes: '',
-  // ),
 }

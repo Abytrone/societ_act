@@ -38,10 +38,15 @@ dependencies:
   get: ^4.6.1
   shared_preferences: ^2.0.13
   textfield_tags: ^1.4.2
-  location: ^4.3.0
-  location_web: ^3.1.1
+  # location: ^4.3.0
+  # location_web: ^3.1.1
   another_flushbar: ^1.10.28
-
+  dropdown_search: ^2.0.1
+  dio: ^4.0.4
+  file_picker: ^4.4.0
+  intl: ^0.17.0
+  pull_to_refresh: ^2.0.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

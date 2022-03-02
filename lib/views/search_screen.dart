@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:societ_act/views/welcom_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -9,26 +9,53 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  // AppBar pop up menu actions
+  void selectedItem(BuildContext context, item) {
+    switch (item) {
+      case 0:
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            FontAwesomeIcons.angleLeft,
-            color: Color(0xFF457B9D),
-          ),
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.menu,
-              color: Color(0xFF457B9D),
+        actions: [
+          PopupMenuButton<int>(
+            color: const Color(0xFFEDF1F4),
+            icon: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.menu,
+                color: Color(0xFF457B9D),
+              ),
             ),
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                value: 0,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.search_sharp,
+                      color: Color(0xFF457B9D),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Advanced Search",
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            onSelected: (item) => selectedItem(context, item),
           ),
         ],
         centerTitle: true,
@@ -36,7 +63,6 @@ class _SearchScreenState extends State<SearchScreen> {
         title: Container(
           height: 37,
           width: 280,
-          padding: const EdgeInsets.only(top: 0, left: 10, right: 8),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -46,7 +72,9 @@ class _SearchScreenState extends State<SearchScreen> {
               style:
                   Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 12),
               decoration: InputDecoration(
-                border: InputBorder.none,
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 label: Text(
                   'Search',
@@ -56,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       .copyWith(fontSize: 12),
                 ),
                 suffixIcon: const Icon(
-                  FontAwesomeIcons.slidersH,
+                  Icons.search,
                   color: Color(0xFF457B9D),
                   size: 20,
                 ),

@@ -1,6 +1,15 @@
+import 'dart:convert' as convert;
+import 'package:another_flushbar/flushbar.dart';
+import 'package:dio/dio.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:societ_act/models/category_class.dart';
+import 'package:societ_act/models/user_class.dart';
+import 'package:societ_act/services/server.dart';
+import 'package:societ_act/views/location_screen.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
@@ -12,10 +21,46 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  String category = 'Select Category';
+  @override
+  void initState() {
+    _getUserInfo();
+    super.initState();
+  }
+
+  String? token;
+  User? user;
+
+  void _getUserInfo() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user')!;
+    token = localStorage.getString('token');
+    if (userJson != '') {
+      setState(() {
+        var jsonResponse = convert.jsonDecode(userJson);
+        user = User.fromJson(jsonResponse);
+      });
+    } else {
+      await Flushbar(
+        message: "Error loading user information.",
+        icon: const Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Color(0xFFE63946),
+        ),
+        backgroundColor: const Color(0xFF457B9D),
+        duration: const Duration(seconds: 3),
+        leftBarIndicatorColor: const Color(0xFFE63946),
+      ).show(context);
+    }
+  }
+
+  String? category = '';
+  int? categoryID = 0;
+  List<String> keywords = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFEDF1F4),
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
@@ -103,65 +148,53 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 45, left: 30, right: 30, bottom: 20),
-                    child: DropdownButtonFormField<String>(
-                      value: category,
-                      icon: const Icon(
-                        FontAwesomeIcons.angleDown,
-                        color: Colors.black38,
-                      ),
-                      decoration: const InputDecoration(
-                        hintText: 'Select Your Gender',
+                    child: DropdownSearch<Category>(
+                      dropdownSearchDecoration: const InputDecoration(
+                        labelText: 'Categories',
+                        isDense: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(7)),
                         ),
                       ),
-                      iconSize: 24,
-                      elevation: 0,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          category = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        'Select Category',
-                        'Category 1',
-                        'Category 2',
-                        'Category 3',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2!
-                                .copyWith(fontSize: 14),
+                      popupTitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Select Category',
+                              style: Theme.of(context).textTheme.bodyText2,
+                            ),
                           ),
-                        );
-                      }).toList(),
+                        ],
+                      ),
+                      popupBackgroundColor: const Color(0xFFEDF1F4),
+                      dropDownButton: const Icon(
+                        FontAwesomeIcons.angleDown,
+                        color: Color(0xFF457B9D),
+                      ),
+                      showSearchBox: true,
+                      mode: Mode.DIALOG,
+                      onFind: (filter) async {
+                        var response = await Dio().get(categoryRoute,
+                            options: Options(headers: {
+                              'Accept': '*/*',
+                              'Content-Type': 'application/json',
+                              'Authorization':
+                                  'Bearer 63|aaPLpYT6EO4u7KkwPEXqd5JLgo6vYADykeXTLUzR'
+                            }));
+                        var models =
+                            Category.fromJsonList(response.data['data']);
+                        return models;
+                      },
+                      onChanged: (data) {
+                        setState(() {
+                          category = data?.name;
+                          categoryID = data?.id;
+                        });
+                        // print(data);
+                      },
                     ),
-                    // TextFormField(
-                    //   style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    //         fontSize: 14,
-                    //       ),
-                    //   decoration: InputDecoration(
-                    //     label: Text(
-                    //       'Select Category',
-                    //       style:
-                    //           Theme.of(context).textTheme.bodyText1!.copyWith(
-                    //                 fontSize: 14,
-                    //               ),
-                    //     ),
-                    //     suffixIcon: const Icon(
-                    //       FontAwesomeIcons.angleDown,
-                    //       color: Color(0xFF457B9D),
-                    //     ),
-                    //     focusColor: const Color(0xFF1D3557),
-                    //     border: const OutlineInputBorder(
-                    //       borderRadius: BorderRadius.all(Radius.circular(7)),
-                    //     ),
-                    //   ),
-                    // ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -207,7 +240,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                         ),
                         tagTextStyle: const TextStyle(
-                            fontWeight: FontWeight.normal, color: Colors.black),
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xFF457B9D)),
                       ),
                       textFieldStyler: TextFieldStyler(
                         hintText: "Examples: Hospitals, School Building",
@@ -222,37 +256,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                       onDelete: (tag) {
-                        print('onDelete: $tag');
+                        // print('onDelete: $tag');
+                        setState(() {
+                          keywords.remove(tag);
+                        });
                       },
                       onTag: (tag) {
-                        print('onTag: $tag');
+                        // print('onTag: $tag');
                       },
                       validator: (String tag) {
-                        print('validator: $tag');
+                        // print('validator: $tag');
+
                         if (tag.length > 10) {
                           return "hey that is too much";
+                        } else {
+                          keywords.add(tag);
                         }
                         return null;
                       },
                     ),
-                    // child: TextFormField(
-                    //   style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    //         fontSize: 14,
-                    //       ),
-                    //   decoration: InputDecoration(
-                    //     label: Text(
-                    //       'Examples: Hospitals, School Building',
-                    //       style:
-                    //           Theme.of(context).textTheme.bodyText1!.copyWith(
-                    //                 fontSize: 12,
-                    //               ),
-                    //     ),
-                    //     focusColor: const Color(0xFF1D3557),
-                    //     border: const OutlineInputBorder(
-                    //       borderRadius: BorderRadius.all(Radius.circular(7)),
-                    //     ),
-                    //   ),
-                    // ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
@@ -260,7 +282,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: PrimaryButton(
                         text: 'Next',
                         onTap: () {
-                          Navigator.of(context).pushNamed('location');
+                          Navigator.of(context).pushReplacement(
+                            PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => LocationScreen(
+                                categoryID: categoryID,
+                                category: category,
+                                keywords: keywords,
+                                token: token!,
+                              ),
+                            ),
+                          );
+                          // }
                         },
                       ),
                     ),

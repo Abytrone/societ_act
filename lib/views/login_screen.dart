@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:societ_act/controllers/user_controller.dart';
 import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/server.dart';
+import 'package:societ_act/views/bottom_navy.dart';
 import 'package:societ_act/views/widgets/input_field.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
@@ -159,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (_formKey!.currentState!.validate()) {
                                 login();
                               }
-                              // Navigator.of(context).pushNamed('signup');
+                              // Navigator.of(context).pushNamed('bottom-navy');
                             },
                           )
                         : const Center(
@@ -231,7 +230,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-
     try {
       final result = await InternetAddress.lookup(baseUrl);
       if (result.isNotEmpty && result[0].address.isNotEmpty) {
@@ -252,7 +250,6 @@ class _LoginScreenState extends State<LoginScreen> {
           var userData = User.fromJson(jsonResponse);
 
           if (userData.data.message == 'Invalid Login Credentials') {
-            // print('INVALID LOGIN CREDENTIALS');
             setState(() {
               _isLoading = false;
             });
@@ -268,18 +265,21 @@ class _LoginScreenState extends State<LoginScreen> {
               leftBarIndicatorColor: const Color(0xFFE63946),
             ).show(context);
           } else {
-            // SharedPreferences localStorage =
-            //     await SharedPreferences.getInstance();
-            // localStorage.setString('token', userData.token!);
-            // localStorage.setString('user', jsonEncode(userData.data));
+            setState(() {
+              _isLoading = false;
+            });
+            SharedPreferences localStorage =
+                await SharedPreferences.getInstance();
+            localStorage.setString('token', userData.token!);
+            localStorage.setString('user', jsonEncode(userData));
 
-            // Navigator.of(context).pushReplacement(
-            //   PageRouteBuilder(
-            //     pageBuilder: (_, __, ___) => new BottomNavy(),
-            //   ),
-            // );
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const BottomNavy(),
+              ),
+            );
             await Flushbar(
-              message: "Login Successful!",
+              message: "Login Successfull!",
               icon: const Icon(
                 Icons.info_outline,
                 size: 28.0,
@@ -289,14 +289,11 @@ class _LoginScreenState extends State<LoginScreen> {
               duration: const Duration(seconds: 3),
               leftBarIndicatorColor: Colors.green,
             ).show(context);
-
-            setState(() {
-              _isLoading = false;
-            });
           }
         } else {
-          // RESPONSE IF STATUS IS NOT 200
-          // print('Request failed with status: ${response.statusCode}.');
+          setState(() {
+            _isLoading = false;
+          });
           await Flushbar(
             message: "Request failed with status: ${response.statusCode}.",
             icon: const Icon(
@@ -308,13 +305,11 @@ class _LoginScreenState extends State<LoginScreen> {
             duration: const Duration(seconds: 3),
             leftBarIndicatorColor: const Color(0xFFE63946),
           ).show(context);
-          setState(() {
-            _isLoading = false;
-          });
         }
       } else {
-        // print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
-        // Navigator.of(context).pushNamed('nointernet');
+        setState(() {
+          _isLoading = false;
+        });
         await Flushbar(
           message: "Please check your internet connection and try again",
           icon: const Icon(
@@ -326,17 +321,11 @@ class _LoginScreenState extends State<LoginScreen> {
           duration: const Duration(seconds: 3),
           leftBarIndicatorColor: const Color(0xFFE63946),
         ).show(context);
-        setState(() {
-          _isLoading = false;
-        });
       }
     } on SocketException catch (_) {
       setState(() {
         _isLoading = false;
       });
-      // Navigator.of(context).pushNamed('nointernet');
-      // print(
-      //     'SERVER CANNOT BE REACHED AT THE MOMENT, PLEASE CHECK YOUR INTERNET AND TRY AGAIN. $_');
       await Flushbar(
         message: "Please check your internet connection and try again",
         icon: const Icon(
