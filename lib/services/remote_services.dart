@@ -124,72 +124,57 @@ class RemoteServices {
     String token,
     BuildContext context,
   ) async {
-    try {
-      final result = await InternetAddress.lookup(baseUrl);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        final response = await http.post(
-          Uri.https(baseUrl, casesRoute, {
-            'location': location,
-            'category': category,
-            'keywords': keywords,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          List<Info>? infosList = [];
-          var cases = caseFromJson(response.body);
-          for (var i in cases.data) {
-            Info info = Info(
-              id: i.id,
-              type: i.type,
-              attributes: i.attributes,
-            );
-            infosList.add(info);
-          }
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => SearchCasesScreen(
-                cases: infosList,
-                token: token,
-              ),
-            ),
+    // try {
+    final result = await InternetAddress.lookup(baseUrl);
+    if (result.isNotEmpty && result[0].address.isNotEmpty) {
+      final response = await http.post(
+        Uri.https(baseUrl, casesRoute, {
+          'location': location,
+          'category': category,
+          'keywords': keywords,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        List<Info>? infosList = [];
+        var cases = caseFromJson(response.body);
+        for (var i in cases.data) {
+          Info info = Info(
+            id: i.id,
+            type: i.type,
+            attributes: i.attributes,
           );
-          await Flushbar(
-            message: "Request Successful!",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
-          return infosList;
-        } else {
-          //show error message
-          // print('Couldn\'t get posts! ${response.statusCode}');
-          await Flushbar(
-            message: "Request failed with status: ${response.statusCode}.",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Color(0xFFE63946),
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: const Color(0xFFE63946),
-          ).show(context);
-          return null;
+          infosList.add(info);
         }
-      } else {
-        // print('Address couldnt be looked at');
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => SearchCasesScreen(
+              cases: infosList,
+              token: token,
+            ),
+          ),
+        );
         await Flushbar(
-          message: "Please check your internet connection and try again",
+          message: "Request Successful!",
+          icon: const Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Colors.green,
+          ),
+          backgroundColor: const Color(0xFF457B9D),
+          duration: const Duration(seconds: 3),
+          leftBarIndicatorColor: Colors.green,
+        ).show(context);
+        return infosList;
+      } else {
+        //show error message
+        // print('Couldn\'t get posts! ${response.statusCode}');
+        await Flushbar(
+          message: "Request failed with status: ${response.statusCode}.",
           icon: const Icon(
             Icons.info_outline,
             size: 28.0,
@@ -203,7 +188,7 @@ class RemoteServices {
       }
     } catch (e) {
       await Flushbar(
-        message: "Data not found!",
+        message: "Please check your internet connection and try again",
         icon: const Icon(
           Icons.info_outline,
           size: 28.0,
@@ -213,7 +198,22 @@ class RemoteServices {
         duration: const Duration(seconds: 3),
         leftBarIndicatorColor: const Color(0xFFE63946),
       ).show(context);
+      return null;
     }
+    // } catch (e) {
+    //   print(e);
+    //   await Flushbar(
+    //     message: "Data not found!",
+    //     icon: const Icon(
+    //       Icons.info_outline,
+    //       size: 28.0,
+    //       color: Color(0xFFE63946),
+    //     ),
+    //     backgroundColor: const Color(0xFF457B9D),
+    //     duration: const Duration(seconds: 3),
+    //     leftBarIndicatorColor: const Color(0xFFE63946),
+    //   ).show(context);
+    // }
     return null;
   }
 

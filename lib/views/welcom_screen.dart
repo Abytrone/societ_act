@@ -64,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           child: const Icon(
             FontAwesomeIcons.angleLeft,
