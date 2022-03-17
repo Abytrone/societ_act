@@ -25,3 +25,10 @@ extension ColorExtension on String {
     }
   }
 }
+// 0xFFE63946
+// 0xFFF1FAEE
+// 0xFFA8DADC
+// 0xFF457B9D
+// 0xFF1D3557
+// 0xFFCFD7CD
+// 0xFFEDF1F4

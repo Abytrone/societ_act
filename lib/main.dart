@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:societ_act/views/bottom_navy.dart';
+import 'package:societ_act/views/home_screen.dart';
 import 'package:societ_act/views/login_screen.dart';
 import 'package:societ_act/views/onboarding_screen.dart';
 import 'package:societ_act/views/signup_screen.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         'onboarding': (BuildContext context) => const OnboardingScreens(),
         'login': (BuildContext context) => const LoginScreen(),
         'signup': (BuildContext context) => const SignupScreen(),
+        'home': (BuildContext context) => const HomeScreen(),
         'welcome': (BuildContext context) => const WelcomeScreen(),
         // 'location': (BuildContext context) => const LocationScreen(),
         'bottom-navy': (BuildContext context) => const BottomNavy(),

@@ -58,6 +58,9 @@ class Attributes {
     required this.category,
     required this.location,
     required this.likes,
+    required this.like,
+    required this.follow,
+    required this.status,
     required this.commentsCount,
     required this.comments,
     required this.isAdopted,
@@ -71,11 +74,14 @@ class Attributes {
   PostedBy postedBy;
   String category;
   String location;
-  int likes;
-  int commentsCount;
+  String likes;
+  String like;
+  String follow;
+  String status;
+  String commentsCount;
   List<Comment> comments;
-  int isAdopted;
-  DateTime createdAt;
+  String isAdopted;
+  String createdAt;
 
   factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
         title: json["title"],
@@ -86,11 +92,14 @@ class Attributes {
         category: json["category"],
         location: json["location"],
         likes: json["likes"],
+        like: json["has_liked"],
+        follow: json["has_followed"],
+        status: json["status"],
         commentsCount: json["comments_count"],
         comments: List<Comment>.from(
             json["comments"].map((x) => Comment.fromJson(x))),
         isAdopted: json["is_adopted"],
-        createdAt: DateTime.parse(json["created_at"]),
+        createdAt: json["created_at"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -102,10 +111,13 @@ class Attributes {
         "category": category,
         "location": location,
         "likes": likes,
+        "has_liked": like,
+        "has_followed": follow,
+        "status": status,
         "comments_count": commentsCount,
         "comments": List<dynamic>.from(comments.map((x) => x.toJson())),
         "is_adopted": isAdopted,
-        "created_at": createdAt.toIso8601String(),
+        "created_at": createdAt,
       };
 }
 
@@ -115,6 +127,8 @@ class Comment {
     required this.comment,
     required this.message,
     required this.createdAt,
+    required this.postedAt,
+    required this.following,
     required this.user,
   });
 
@@ -122,6 +136,8 @@ class Comment {
   String? comment;
   String? message;
   DateTime? createdAt;
+  String? postedAt;
+  String? following;
   List<PostUser>? user;
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
@@ -131,6 +147,8 @@ class Comment {
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
+        postedAt: json["posted_at"],
+        following: json["is_following"],
         user: json["user"] == null
             ? null
             : List<PostUser>.from(
@@ -140,7 +158,9 @@ class Comment {
   Map<String, dynamic> toJson() => {
         "user_id": userId,
         "comment": comment,
-        "created_at": createdAt!.toIso8601String(),
+        "created_at": createdAt,
+        "posted_at": postedAt,
+        "is_following": following,
         "user": List<dynamic>.from(user!.map((x) => x.toJson())),
       };
 }
@@ -159,7 +179,7 @@ class PostUser {
   factory PostUser.fromJson(Map<String, dynamic> json) => PostUser(
         fullname: json["fullname"],
         username: json["username"],
-        picture: json["picture"],
+        picture: json["picture"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -179,20 +199,20 @@ class PostedBy {
 
   String username;
   String fullname;
-  String? picture;
-  DateTime createdAt;
+  String picture;
+  String createdAt;
 
   factory PostedBy.fromJson(Map<String, dynamic> json) => PostedBy(
         username: json["username"],
         fullname: json["fullname"],
-        picture: json["picture"],
-        createdAt: DateTime.parse(json["created_at"]),
+        picture: json["picture"].toString(),
+        createdAt: json["created_at"],
       );
 
   Map<String, dynamic> toJson() => {
         "username": username,
         "fullname": fullname,
         "picture": picture,
-        "created_at": createdAt.toIso8601String(),
+        "created_at": createdAt,
       };
 }

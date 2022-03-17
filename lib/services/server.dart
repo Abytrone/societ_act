@@ -9,7 +9,11 @@ const String signupRoute = '/api/v1/auth/register';
 const String casesRoute = '/api/v1/cases/search';
 const String postsRoute = '/api/v1/cases';
 const String createCommentRoute = '/api/v1/cases/comments';
-const String adoptRoute = '/api/v1/cases/adopt';
+const String cases = '/api/v1/cases'; // ------------adopt/follow/resolve
+const String users = '/api/v1/users';
+const String likeRoute = '/api/v1/cases/like';
+const String networkRoute = '/api/v1/network';
+const String ffRoute = '/api/v1/user';
 
 // Routes with Dio() doesn't accept concatination, hence [baseUrl] with [route]
 const String categoryRoute =

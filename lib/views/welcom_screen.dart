@@ -147,53 +147,95 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 45, left: 30, right: 30, bottom: 20),
-                    child: DropdownSearch<Category>(
-                      dropdownSearchDecoration: const InputDecoration(
-                        labelText: 'Categories',
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                        ),
-                      ),
-                      popupTitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Select Category',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
+                        top: 20, left: 30, right: 20, bottom: 5),
+                    child: Container(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 2), // changes position of shadow
                           ),
                         ],
                       ),
-                      popupBackgroundColor: const Color(0xFFEDF1F4),
-                      dropDownButton: const Icon(
-                        FontAwesomeIcons.angleDown,
-                        color: Color(0xFF457B9D),
+                      child: DropdownSearch<Category>(
+                        validator: (value) {
+                          if (value == null) {
+                            return '* Required';
+                          } else {
+                            return null;
+                          }
+                        },
+                        errorBuilder: (BuildContext context, value, index) {
+                          return Center(
+                            child: Text(
+                              'No Data',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    fontSize: 12,
+                                  ),
+                            ),
+                          );
+                        },
+                        dropdownSearchBaseStyle:
+                            Theme.of(context).textTheme.bodyText1,
+                        dropdownSearchDecoration: InputDecoration(
+                          labelText: 'Select Category',
+                          labelStyle: Theme.of(context).textTheme.bodyText1,
+                          border: InputBorder.none,
+                          isCollapsed: true,
+                        ),
+                        popupTitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Select Category',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        popupBackgroundColor: const Color(0xFFEDF1F4),
+                        dropDownButton: const Icon(
+                          FontAwesomeIcons.angleDown,
+                          color: Color(0xFF457B9D),
+                        ),
+                        showSearchBox: true,
+                        mode: Mode.DIALOG,
+                        onFind: (filter) async {
+                          var response = await Dio().get(
+                            categoryRoute,
+                            options: Options(
+                              headers: {
+                                'Accept': '*/*',
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer $token'
+                              },
+                            ),
+                          );
+                          var models =
+                              Category.fromJsonList(response.data['data']);
+                          return models;
+                        },
+                        onChanged: (data) {
+                          setState(() {
+                            category = data?.name;
+                            categoryID = data?.id;
+                          });
+                          // print(data);
+                        },
                       ),
-                      showSearchBox: true,
-                      mode: Mode.DIALOG,
-                      onFind: (filter) async {
-                        var response = await Dio().get(categoryRoute,
-                            options: Options(headers: {
-                              'Accept': '*/*',
-                              'Content-Type': 'application/json',
-                              'Authorization':
-                                  'Bearer 63|aaPLpYT6EO4u7KkwPEXqd5JLgo6vYADykeXTLUzR'
-                            }));
-                        var models =
-                            Category.fromJsonList(response.data['data']);
-                        return models;
-                      },
-                      onChanged: (data) {
-                        setState(() {
-                          category = data?.name;
-                          categoryID = data?.id;
-                        });
-                        // print(data);
-                      },
                     ),
                   ),
                   Padding(
@@ -218,66 +260,89 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 10, left: 30, right: 30, bottom: 20),
-                    child: TextFieldTags(
-                      initialTags: const [],
-                      tagsStyler: TagsStyler(
-                        showHashtag: true,
-                        tagMargin: const EdgeInsets.only(right: 4.0),
-                        tagCancelIcon: const Icon(Icons.cancel,
-                            size: 15.0, color: Colors.red),
-                        tagCancelIconPadding:
-                            const EdgeInsets.only(left: 4.0, top: 2.0),
-                        tagPadding: const EdgeInsets.only(
-                            top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
-                        tagDecoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey.shade300,
+                        top: 10, left: 30, right: 20, bottom: 5),
+                    child: Container(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 2), // changes position of shadow
                           ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(20.0),
+                        ],
+                      ),
+                      child: TextFieldTags(
+                        initialTags: const [],
+                        tagsStyler: TagsStyler(
+                          tagMargin: const EdgeInsets.only(right: 4.0),
+                          tagCancelIcon: const Icon(Icons.cancel,
+                              size: 15.0, color: Colors.red),
+                          tagCancelIconPadding:
+                              const EdgeInsets.only(left: 4.0, top: 2.0),
+                          tagPadding: const EdgeInsets.only(
+                              top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
+                          tagDecoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20.0),
+                            ),
                           ),
+                          tagTextStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xFF457B9D)),
                         ),
-                        tagTextStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Color(0xFF457B9D)),
-                      ),
-                      textFieldStyler: TextFieldStyler(
-                        hintText: "Examples: Hospitals, School Building",
-                        isDense: false,
-                        textFieldFocusedBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 1.0),
+                        textSeparators: const [" "],
+                        textFieldStyler: TextFieldStyler(
+                          hintText: "Examples: Hospitals, School Building",
+                          hintStyle:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    fontSize: 15,
+                                  ),
+                          helperText: "Please use only space to seperate tags",
+                          helperStyle:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                  ),
+                          contentPadding:
+                              const EdgeInsets.only(bottom: 5, top: 12),
+                          textFieldBorder: InputBorder.none,
+                          textFieldFocusedBorder: InputBorder.none,
                         ),
-                        textFieldBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 2.0),
-                        ),
-                      ),
-                      onDelete: (tag) {
-                        // print('onDelete: $tag');
-                        setState(() {
-                          keywords.remove(tag);
-                        });
-                      },
-                      onTag: (tag) {
-                        // print('onTag: $tag');
-                      },
-                      validator: (String tag) {
-                        // print('validator: $tag');
+                        onDelete: (tag) {
+                          // print('onDelete: $tag');
+                          setState(() {
+                            keywords.remove(tag);
+                          });
+                        },
+                        onTag: (tag) {
+                          // print('onTag: $tag');
+                        },
+                        validator: (tag) {
+                          // print('validator: $tag');
 
-                        if (tag.length > 10) {
-                          return "hey that is too much";
-                        } else {
-                          keywords.add(tag);
-                        }
-                        return null;
-                      },
+                          if (tag == '') {
+                            return "* Required";
+                          } else {
+                            keywords.add(tag);
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
+                    padding: const EdgeInsets.only(top: 20, bottom: 20.0),
                     child: Center(
                       child: PrimaryButton(
                         text: 'Next',

@@ -12,19 +12,24 @@ class PostsController extends GetxController {
     super.onInit();
   }
 
-  void fetchPosts() async {
+  Future<void> fetchPosts() async {
     try {
       isLoading(true);
-      // var posts = await RemoteServices.fetchPosts();
-
-      // for (var i in posts!.data) {
-      //   Datum post = Datum(
-      //     id: i.id,
-      //     type: i.type,
-      //     attributes: i.attributes,
-      //   );
-      //   postsList.add(post);
-      // }
+      var posts = await RemoteServices.fetchPosts();
+      if (posts != null) {
+        postsList.value = posts.data;
+        // for (var i in posts.data) {
+        //   Datum post = Datum(
+        //     id: i.id,
+        //     type: i.type,
+        //     attributes: i.attributes,
+        //   );
+        //   postsList.add(post);
+        // }
+      } else {
+        isLoading(false);
+        return null;
+      }
     } finally {
       isLoading(false);
     }

@@ -11,7 +11,6 @@ import 'package:societ_act/controllers/radiobutton_controller.dart';
 import 'package:societ_act/models/error_class.dart';
 import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/server.dart';
-import 'package:societ_act/views/bottom_navy.dart';
 import 'package:societ_act/views/widgets/input_field.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
@@ -321,9 +320,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   textCapitalization: TextCapitalization.none,
                   validator: (email) {
                     String pattern =
-                        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-                        r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-                        r"{0,253}[a-zA-Z0-9])?)*$";
+                        r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$';
+                    // r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+                    // r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+                    // r"{0,253}[a-zA-Z0-9])?)*$";
                     RegExp regex = RegExp(pattern);
                     if (!regex.hasMatch(email!)) {
                       return 'Enter a valid email address';
@@ -524,7 +524,7 @@ class _SignupScreenState extends State<SignupScreen> {
               await SharedPreferences.getInstance();
           localStorage.setString('token', userData.token!);
           localStorage.setString('user', jsonEncode(userData));
-          Navigator.of(context).pushNamed('welcome');
+          Navigator.of(context).pushNamed('bottom-navy');
 
           // Navigator.of(context).pushReplacement(
           //   PageRouteBuilder(

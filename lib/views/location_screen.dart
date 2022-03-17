@@ -111,52 +111,89 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 10, left: 30, right: 30, bottom: 20),
-                    child: DropdownSearch<Location>(
-                      dropdownSearchDecoration: const InputDecoration(
-                        labelText: 'Locations',
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                        ),
-                      ),
-                      popupTitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Select Location',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
+                        top: 10, left: 30, right: 20, bottom: 5),
+                    child: Container(
+                      padding:
+                          const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 2), // changes position of shadow
                           ),
                         ],
                       ),
-                      popupBackgroundColor: const Color(0xFFEDF1F4),
-                      dropDownButton: const Icon(
-                        FontAwesomeIcons.angleDown,
-                        color: Color(0xFF457B9D),
+                      child: DropdownSearch<Location>(
+                        validator: (value) {
+                          if (value == null) {
+                            return '* Required';
+                          } else {
+                            return null;
+                          }
+                        },
+                        errorBuilder: (BuildContext context, value, index) {
+                          return Center(
+                            child: Text(
+                              'No Data',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    fontSize: 12,
+                                  ),
+                            ),
+                          );
+                        },
+                        dropdownSearchDecoration: InputDecoration(
+                          labelText: 'Select Location',
+                          labelStyle: Theme.of(context).textTheme.bodyText1,
+                          isCollapsed: true,
+                          border: InputBorder.none,
+                        ),
+                        popupTitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                'Select Location',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        popupBackgroundColor: const Color(0xFFEDF1F4),
+                        dropDownButton: const Icon(
+                          FontAwesomeIcons.angleDown,
+                          color: Color(0xFF457B9D),
+                        ),
+                        showSearchBox: true,
+                        mode: Mode.DIALOG,
+                        onFind: (filter) async {
+                          var response = await Dio().get(locationRoute,
+                              options: Options(headers: {
+                                'Accept': '*/*',
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ${widget.token}'
+                              }));
+                          var models =
+                              Location.fromJsonList(response.data['data']);
+                          return models;
+                        },
+                        onChanged: (data) {
+                          setState(() {
+                            location = data?.name;
+                            locationID = data?.id;
+                          });
+                          // print(data);
+                        },
                       ),
-                      showSearchBox: true,
-                      mode: Mode.DIALOG,
-                      onFind: (filter) async {
-                        var response = await Dio().get(locationRoute,
-                            options: Options(headers: {
-                              'Accept': '*/*',
-                              'Content-Type': 'application/json',
-                              'Authorization': 'Bearer ${widget.token}'
-                            }));
-                        var models =
-                            Location.fromJsonList(response.data['data']);
-                        return models;
-                      },
-                      onChanged: (data) {
-                        setState(() {
-                          location = data?.name;
-                          locationID = data?.id;
-                        });
-                        // print(data);
-                      },
                     ),
                   ),
                   Padding(
@@ -247,7 +284,6 @@ class _LocationScreenState extends State<LocationScreen> {
                             widget.token,
                             context,
                           );
-                          // login();
                         },
                       ),
                     ),

@@ -2,8 +2,6 @@
 //
 //     final category = categoryFromJson(jsonString);
 
-import 'dart:convert';
-
 // Category categoryFromJson(String str) => Category.fromJson(json.decode(str));
 
 // String categoryToJson(Category datum) => json.encode(datum.toJson());

@@ -1,15 +1,16 @@
 // ignore_for_file: constant_identifier_names
 import 'dart:convert' as convert;
-import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:societ_act/services/server.dart';
+import 'package:societ_act/services/remote_services.dart';
+import 'package:societ_act/views/followers_screen.dart';
+import 'package:societ_act/views/following_screen.dart';
+import 'package:societ_act/views/network_screen.dart';
 import 'package:societ_act/views/profile_screen.dart';
 import '../models/user_class.dart';
-import 'package:http/http.dart' as http;
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -29,29 +30,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Image.asset(
-              //   'assets/icon/caution.png',
+              //   'assets/caution.png',
               //   scale: 5,
               // ),
-              Text(
-                'Are you sure?',
-                style: Theme.of(context).textTheme.bodyText2,
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/caution.png'),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Are you sure',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
               ),
               Text(
                 'You want to logout of the system?',
+                textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyText2,
               ),
             ],
           ),
-          // content: Text(
-          //   'Are you sure?',
-          //   style: TextStyle(
-          //     fontSize: 30,
-          //     color: Colors.grey,
-          //     fontWeight: FontWeight.w700,
-          //   ),
-          // ),
           actions: <Widget>[
             TextButton(
               child: const Text(
@@ -72,7 +78,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               onPressed: () {
-                logout();
+                services.logout(context, token!);
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
             )
@@ -81,6 +87,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       },
     );
   }
+
+  RemoteServices services = RemoteServices();
 
   @override
   void initState() {
@@ -119,21 +127,42 @@ class _NotificationScreenState extends State<NotificationScreen> {
   // AppBar pop up menu actions
   void selectedItem(BuildContext context, item) {
     switch (item) {
-      case 0:
+      case 1:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FollowersScreen(
+                  user: user!,
+                )));
+        break;
+      case 2:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FollowingScreen(
+                  user: user!,
+                )));
+        break;
+      case 3:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => NetworkScreen(
+                  user: user!,
+                )));
+        break;
+      case 4:
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ProfileScreen(
                   user: user!,
                 )));
         break;
-      case 1:
+      case 5:
+        // ignore: avoid_print
         print('Settings Clicked');
         // Navigator.of(context)
         //     .push(MaterialPageRoute(builder: (context) => SettingPage()));
         break;
-      case 2:
+      case 6:
+        // ignore: avoid_print
         print("Privacy Clicked");
         break;
-      case 3:
+      case 7:
+        // ignore: avoid_print
         print("User Logged out");
         _asyncConfirmDialog(context);
         break;
@@ -156,7 +185,67 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             itemBuilder: (context) => [
               PopupMenuItem<int>(
-                value: 0,
+                value: 1,
+                child: Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.peopleArrows,
+                      color: Color(0xFF457B9D),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Followers",
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 2,
+                child: Row(
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.users,
+                      color: Color(0xFF457B9D),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Following",
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 3,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.people,
+                      color: Color(0xFF457B9D),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Network",
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 4,
                 child: Row(
                   children: [
                     const Icon(
@@ -176,7 +265,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               PopupMenuItem<int>(
-                value: 1,
+                value: 5,
                 child: Row(
                   children: [
                     const Icon(
@@ -196,7 +285,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               PopupMenuItem<int>(
-                value: 2,
+                value: 6,
                 child: Row(
                   children: [
                     const Icon(
@@ -207,7 +296,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       width: 10,
                     ),
                     Text(
-                      "Privacy Policy page",
+                      "Privacy Policy",
                       style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontSize: 14,
                           ),
@@ -219,7 +308,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 height: 10,
               ),
               PopupMenuItem<int>(
-                value: 3,
+                value: 7,
                 child: Row(
                   children: [
                     const Icon(
@@ -491,7 +580,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width > 340 ? 350 : 340,
+                    width: MediaQuery.of(context).size.width > 340 ? 305 : 340,
                     height: 200,
                     decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -515,77 +604,5 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ],
       ),
     );
-  }
-
-  // Logout method
-  void logout() async {
-    // logout from the server ...
-    try {
-      final result = await InternetAddress.lookup(baseUrl).timeout(10.seconds);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        final response = await http.post(
-          Uri.https(baseUrl, logoutRoute),
-          headers: {
-            'Accept': '*/*',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          SharedPreferences localStorage =
-              await SharedPreferences.getInstance();
-          localStorage.remove('user');
-          localStorage.remove('token');
-
-          Navigator.of(context).popAndPushNamed('login');
-
-          // print('LOGGED OUT SUCCESSFULLY!');
-
-          await Flushbar(
-            message: "Logged out Successfully!",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
-        } else {
-          // print(
-          //     'COULD NOT LOGOUT. PLEASE TRY AGAIN LATER! ${response.statusCode}');
-          await Flushbar(
-            message: "Request failed with status: ${response.statusCode}.",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Color(0xFFE63946),
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: const Color(0xFFE63946),
-          ).show(context);
-        }
-      } else {
-        print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
-        // Navigator.of(context).pushNamed('nointernet');
-      }
-    } on SocketException catch (_) {
-      Navigator.of(context).pushNamed('nointernet');
-      print('Not Connected');
-
-      await Flushbar(
-        message: "The server cannot be reached at the moment!",
-        icon: const Icon(
-          Icons.info_outline,
-          size: 28.0,
-          color: Color(0xFFE63946),
-        ),
-        backgroundColor: const Color(0xFF457B9D),
-        duration: const Duration(seconds: 3),
-        leftBarIndicatorColor: const Color(0xFFE63946),
-      ).show(context);
-    }
   }
 }

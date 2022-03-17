@@ -1,15 +1,22 @@
+import 'dart:async';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'dart:convert' as convert;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:societ_act/models/posts_class.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:societ_act/controllers/posts_controller.dart';
 import 'package:societ_act/services/remote_services.dart';
+import 'package:societ_act/views/followers_screen.dart';
+import 'package:societ_act/views/following_screen.dart';
+import 'package:societ_act/views/network_screen.dart';
 import 'package:societ_act/views/post_detail_scree.dart';
 import 'package:societ_act/views/post_upload_screen.dart';
+import 'package:societ_act/views/profile_screen.dart';
 
 import '../models/user_class.dart';
 
@@ -20,13 +27,24 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+enum ConfirmAction { CANCEL, ACCEPT }
+
 class _HomeScreenState extends State<HomeScreen> {
-  // final PostsController _postsController = Get.put(PostsController());
   final RemoteServices services = RemoteServices();
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     _getUserInfo();
+
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      _postsController.fetchPosts();
+    });
   }
 
   String? token;
@@ -93,15 +111,118 @@ class _HomeScreenState extends State<HomeScreen> {
   // Initial Selected Value
   String dropdownValue = '';
 
-  final RefreshController refreshController = RefreshController();
+  PostsController _postsController = Get.put(PostsController());
 
-// AppBar pop up menu actions
+  bool adopt = false;
+  // AppBar pop up menu actions
   void selectedItem(BuildContext context, item) {
     switch (item) {
-      case 0:
-        services.fetchPosts();
+      case 1:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FollowersScreen(
+                  user: user!,
+                )));
+        break;
+      case 2:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FollowingScreen(
+                  user: user!,
+                )));
+        break;
+      case 3:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => NetworkScreen(
+                  user: user!,
+                )));
+        break;
+      case 4:
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ProfileScreen(
+                  user: user!,
+                )));
+        break;
+      case 5:
+        // ignore: avoid_print
+        print('Settings Clicked');
+        // Navigator.of(context)
+        //     .push(MaterialPageRoute(builder: (context) => SettingPage()));
+        break;
+      case 6:
+        // ignore: avoid_print
+        print("Privacy Clicked");
+        break;
+      case 7:
+        // ignore: avoid_print
+        print("User Logged out");
+        _asyncConfirmDialog(context);
         break;
     }
+  }
+
+  // Dialog box for logout
+  Future<ConfirmAction?> _asyncConfirmDialog(BuildContext context) async {
+    return showDialog<ConfirmAction>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Image.asset(
+              //   'assets/caution.png',
+              //   scale: 5,
+              // ),
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/caution.png'),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Are you sure',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+              ),
+              Text(
+                'You want to logout of the system?',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'CANCEL',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(ConfirmAction.CANCEL);
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'YES',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+              onPressed: () {
+                services.logout(context, token!);
+                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -122,18 +243,141 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               itemBuilder: (context) => [
                 PopupMenuItem<int>(
-                  value: 0,
+                  value: 1,
                   child: Row(
                     children: [
                       const Icon(
-                        Icons.refresh_outlined,
+                        FontAwesomeIcons.peopleArrows,
                         color: Color(0xFF457B9D),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        "Refresh",
+                        "Followers",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        FontAwesomeIcons.users,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Following",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.people,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Network",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 4,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.person,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Profile",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 5,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.settings,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Settings",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 6,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.privacy_tip,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Privacy Policy",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(
+                  height: 10,
+                ),
+                PopupMenuItem<int>(
+                  value: 7,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.logout,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Logout",
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                               fontSize: 14,
                             ),
@@ -175,15 +419,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: Container(
-          color: Colors.black12,
-          child: FutureBuilder<List<Datum>?>(
-            future: services.fetchPosts(),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Datum>?> snapshot) {
+          color: const Color(0xFFF1FAEE),
+          child:
+              // StreamBuilder<List<Datum>?>(
+              //   stream: services.getData(),
+              //   builder: (context, snapshot) {
+              //     switch (snapshot.connectionState) {
+              //       case ConnectionState.waiting:
+              //         return const Center(
+              //           child: CircularProgressIndicator(color: Colors.blue),
+              //         );
+              //       case ConnectionState.none:
+              //         return const Center(
+              //           child: Text('No Posts at the moment!'),
+              //         );
+              //       case ConnectionState.active:
+              //         return const Center(
+              //           child: CircularProgressIndicator(),
+              //         );
+              //       case ConnectionState.done:
+              //         return
+              FutureBuilder(
+            future: _postsController.fetchPosts(),
+            builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: Colors.blue),
                   );
                 case ConnectionState.none:
                   return const Center(
@@ -194,271 +456,460 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: CircularProgressIndicator(),
                   );
                 case ConnectionState.done:
-                  return SmartRefresher(
-                    controller: refreshController,
-                    onRefresh: services.fetchPosts().obs,
-                    onLoading: services.fetchPosts().obs,
-                    enablePullUp: true,
-                    enablePullDown: true,
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (snapshot.data!.isEmpty) {
-                          return const Center(
-                            child: Text('NO DATA!'),
-                          );
-                        } else {
-                          return Container(
-                            height: 370,
-                            width: 400,
-                            padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                              color: Colors.white54,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: CircleAvatar(
-                                            maxRadius: 20,
-                                            minRadius: 20,
-                                            backgroundColor: Colors.green,
-                                            backgroundImage: NetworkImage(
-                                              snapshot.data![index].attributes
-                                                          .postedBy.picture ==
-                                                      'null'
-                                                  ? 'https://societyacts.abdulsitech.com/users/user.png'
-                                                  : snapshot
-                                                      .data![index]
-                                                      .attributes
-                                                      .postedBy
-                                                      .picture!,
-                                            ),
-                                          ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              snapshot.data![index].attributes
-                                                  .postedBy.fullname,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText2,
-                                            ),
-                                            const SizedBox(
-                                              height: 3,
-                                            ),
-                                            Text(
-                                              '@${snapshot.data![index].attributes.postedBy.username}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText2!
-                                                  .copyWith(
-                                                    fontSize: 12,
-                                                    color:
-                                                        const Color(0xFF457B9D),
+                  return RefreshIndicator(
+                    onRefresh: () => _postsController.fetchPosts(),
+                    child: Obx(() => ListView.builder(
+                              itemCount: _postsController.postsList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  padding: const EdgeInsets.all(8),
+                                  margin: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        spreadRadius: 3,
+                                        blurRadius: 5,
+                                        offset: const Offset(
+                                            0, 2), // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: _postsController
+                                                              .postsList[index]
+                                                              .attributes
+                                                              .postedBy
+                                                              .picture ==
+                                                          'null'
+                                                      ? 'https://societyacts.abdulsitech.com/users/user.png'
+                                                      : _postsController
+                                                          .postsList[index]
+                                                          .attributes
+                                                          .postedBy
+                                                          .picture,
+                                                  imageBuilder:
+                                                      (context, image) {
+                                                    return CircleAvatar(
+                                                      maxRadius: 20,
+                                                      minRadius: 20,
+                                                      backgroundImage: image,
+                                                    );
+                                                  },
+                                                  progressIndicatorBuilder:
+                                                      (context, url,
+                                                              downloadProgress) =>
+                                                          Shimmer.fromColors(
+                                                    child: const CircleAvatar(
+                                                      maxRadius: 20,
+                                                      minRadius: 20,
+                                                      backgroundColor:
+                                                          Color.fromARGB(255,
+                                                              216, 213, 213),
+                                                    ),
+                                                    baseColor:
+                                                        const Color(0XFFDFDFDF),
+                                                    highlightColor:
+                                                        Colors.white,
                                                   ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    DropdownButton<String>(
-                                      // value: dropdownValue,
-                                      icon: const Icon(Icons.more_horiz),
-                                      elevation: 16,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          dropdownValue = newValue!;
-                                        });
-                                      },
-                                      items: <String>[
-                                        'Adopt Case',
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(
-                                            value,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2,
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.error),
+                                                ),
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    _postsController
+                                                        .postsList[index]
+                                                        .attributes
+                                                        .postedBy
+                                                        .fullname,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 3,
+                                                  ),
+                                                  Text(
+                                                    '@${_postsController.postsList[index].attributes.postedBy.username}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2!
+                                                        .copyWith(
+                                                          fontSize: 12,
+                                                          color: const Color(
+                                                              0xFF457B9D),
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                          onTap: () {
-                                            // print(
-                                            //     '$value ${snapshot.data![index].id} from ${snapshot.data![index].attributes.postedBy.username}');
-                                            services.adoptCase(
-                                              snapshot.data![index].id,
-                                              snapshot.data![index].attributes
-                                                  .postedBy.username,
-                                              token!,
-                                              context,
-                                            );
-                                          },
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        opaque: false,
-                                        pageBuilder:
-                                            (BuildContext context, _, __) {
-                                          return PostDetailScreen(
-                                            posts: snapshot.data![index],
-                                            token: token,
+                                          if (user!.data.username ==
+                                              _postsController.postsList[index]
+                                                  .attributes.postedBy.username)
+                                            DropdownButton<String>(
+                                              icon:
+                                                  const Icon(Icons.more_horiz),
+                                              elevation: 0,
+                                              underline: Container(),
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  dropdownValue = newValue!;
+                                                });
+                                              },
+                                              items: <String>[
+                                                'Resolve Case',
+                                              ].map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(
+                                                    value,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2,
+                                                  ),
+                                                  onTap: () {
+                                                    _postsController
+                                                        .fetchPosts();
+                                                    String type = 'resolve';
+                                                    String userCase = 'case';
+                                                    services.casesAFR(
+                                                      userCase,
+                                                      type,
+                                                      _postsController
+                                                          .postsList[index].id,
+                                                      _postsController
+                                                          .postsList[index]
+                                                          .attributes
+                                                          .postedBy
+                                                          .username,
+                                                      token!,
+                                                      context,
+                                                    );
+                                                  },
+                                                );
+                                              }).toList(),
+                                            )
+                                          else
+                                            DropdownButton<String>(
+                                              icon:
+                                                  const Icon(Icons.more_horiz),
+                                              elevation: 0,
+                                              underline: Container(),
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  dropdownValue = newValue!;
+                                                });
+                                              },
+                                              items: <String>[
+                                                'Adopt Case',
+                                              ].map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(
+                                                    value,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2,
+                                                  ),
+                                                  onTap: () {
+                                                    _postsController
+                                                        .fetchPosts();
+                                                    String type = 'adopt';
+                                                    String userCase = 'case';
+                                                    services.casesAFR(
+                                                      userCase,
+                                                      type,
+                                                      _postsController
+                                                          .postsList[index].id,
+                                                      _postsController
+                                                          .postsList[index]
+                                                          .attributes
+                                                          .postedBy
+                                                          .username,
+                                                      token!,
+                                                      context,
+                                                    );
+                                                  },
+                                                );
+                                              }).toList(),
+                                            )
+                                        ],
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              opaque: false,
+                                              pageBuilder:
+                                                  (BuildContext context, _,
+                                                      __) {
+                                                return PostDetailScreen(
+                                                  posts: _postsController
+                                                      .postsList[index],
+                                                  token: token,
+                                                  index: _postsController
+                                                      .postsList
+                                                      .indexOf(_postsController
+                                                          .postsList[index]),
+                                                  user: user,
+                                                );
+                                              },
+                                            ),
                                           );
                                         },
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 170,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                      ),
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                          snapshot
-                                              .data![index].attributes.picture,
+                                        child: CachedNetworkImage(
+                                          imageUrl: _postsController
+                                              .postsList[index]
+                                              .attributes
+                                              .picture,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: 170,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                              image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: imageProvider,
+                                              ),
+                                            ),
+                                          ),
+                                          placeholder: (context, url) =>
+                                              Shimmer.fromColors(
+                                            baseColor: const Color(0xFFDFDFDF),
+                                            highlightColor: Colors.white,
+                                            child: Container(
+                                              height: 170,
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight: Radius.circular(10),
+                                                ),
+                                                color: Color(0xFFDFDFDF),
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/image.png'),
+                                                  scale: 0.7,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                            height: 170,
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                              color: Color(0xFFDFDFDF),
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/no-pictures.png'),
+                                                scale: 0.7,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Text(
-                                    snapshot.data![index].attributes.title,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.left,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                  ),
-                                ),
-                                Row(
-                                  children: const [
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        FontAwesomeIcons.solidHeart,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        FontAwesomeIcons.commentAlt,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        FontAwesomeIcons.shareAlt,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Padding(
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              opaque: false,
+                                              pageBuilder:
+                                                  (BuildContext context, _,
+                                                      __) {
+                                                return PostDetailScreen(
+                                                  posts: _postsController
+                                                      .postsList[index],
+                                                  token: token,
+                                                  index: _postsController
+                                                      .postsList
+                                                      .indexOf(_postsController
+                                                          .postsList[index]),
+                                                  user: user,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        child: Padding(
                                           padding: const EdgeInsets.only(
-                                              top: 1, left: 8, right: 8),
+                                              top: 5, bottom: 5),
                                           child: Text(
-                                            snapshot.data![index].attributes
-                                                    .likes
-                                                    .toString() +
-                                                ' Likes',
+                                            _postsController.postsList[index]
+                                                .attributes.title,
+                                            maxLines: 2,
+                                            textAlign: TextAlign.left,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyText2!
+                                                .bodyText1!
                                                 .copyWith(
-                                                  fontSize: 12,
+                                                  height: 1.3,
+                                                  fontWeight: FontWeight.bold,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 1, left: 8, right: 8),
-                                          child: Text(
-                                            '${snapshot.data![index].attributes.commentsCount} Comments',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2!
-                                                .copyWith(
-                                                  fontSize: 12,
-                                                ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(0),
+                                            child: Text(
+                                              _postsController.postsList[index]
+                                                  .attributes.createdAt,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                    fontSize: 12,
+                                                  ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    snapshot.data![index].attributes
-                                                .isAdopted ==
-                                            0
-                                        ? InkWell(
-                                            onTap: () {
-                                              services.adoptCase(
-                                                snapshot.data![index].id,
-                                                snapshot.data![index].attributes
-                                                    .postedBy.username,
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          LikeButton(
+                                            size: 20,
+                                            onTap: (isLiked) {
+                                              _postsController.fetchPosts();
+                                              return services
+                                                  .onLikeButtonTapped(
+                                                isLiked,
+                                                _postsController
+                                                    .postsList[index].id,
                                                 token!,
                                                 context,
                                               );
                                             },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 3),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(20)),
-                                                  border: Border.all(
-                                                    color:
-                                                        const Color(0xFF1D3557),
-                                                  ),
-                                                ),
+                                            circleColor: const CircleColor(
+                                                start: Color(0xff00ddff),
+                                                end: Color(0xff0099cc)),
+                                            bubblesColor: const BubblesColor(
+                                              dotPrimaryColor:
+                                                  Color(0xff33b5e5),
+                                              dotSecondaryColor:
+                                                  Color(0xff0099cc),
+                                            ),
+                                            likeBuilder: (bool isLiked) {
+                                              return _postsController
+                                                          .postsList[index]
+                                                          .attributes
+                                                          .like ==
+                                                      '0'
+                                                  ? Icon(
+                                                      isLiked
+                                                          ? FontAwesomeIcons
+                                                              .solidHeart
+                                                          : FontAwesomeIcons
+                                                              .heart,
+                                                      color: isLiked
+                                                          ? Colors.red
+                                                          : Colors.grey,
+                                                      size: 20,
+                                                    )
+                                                  : Icon(
+                                                      isLiked
+                                                          ? FontAwesomeIcons
+                                                              .heart
+                                                          : FontAwesomeIcons
+                                                              .solidHeart,
+                                                      color: isLiked
+                                                          ? Colors.grey
+                                                          : Colors.red,
+                                                      size: 20,
+                                                    );
+                                            },
+                                            likeCount: 0,
+                                            countBuilder:
+                                                (count, isLiked, text) {
+                                              var color = isLiked
+                                                  ? Colors.red
+                                                  : Colors.grey;
+                                              Widget result;
+                                              if (count == 0) {
+                                                result = Text(
+                                                  ' ',
+                                                  style:
+                                                      TextStyle(color: color),
+                                                );
+                                              } else {
+                                                result = Text(
+                                                  ' ',
+                                                  style:
+                                                      TextStyle(color: color),
+                                                );
+                                              }
+                                              return result;
+                                            },
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              FontAwesomeIcons.commentAlt,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              FontAwesomeIcons.shareAlt,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 1, left: 8, right: 8),
                                                 child: Text(
-                                                  'Adopt',
+                                                  '${_postsController.postsList[index].attributes.likes} Likes',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText2!
@@ -467,55 +918,153 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 3),
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(20)),
-                                                color: Color(0xFF1D3557),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 0, left: 8, right: 8),
+                                                child: Text(
+                                                  '${_postsController.postsList[index].attributes.commentsCount} Comments',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText2!
+                                                      .copyWith(
+                                                        fontSize: 12,
+                                                      ),
+                                                ),
                                               ),
-                                              child: Text(
-                                                'Adopted',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText2!
-                                                    .copyWith(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                    ),
-                                              ),
-                                            ),
+                                            ],
                                           ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                                          if (user!.data.username ==
+                                              _postsController.postsList[index]
+                                                  .attributes.postedBy.username)
+                                            Container()
+                                          else
+                                            _postsController.postsList[index]
+                                                        .attributes.isAdopted ==
+                                                    '0'
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      _postsController
+                                                          .fetchPosts();
+                                                      String type = 'adopt';
+                                                      String userCase = 'case';
+                                                      services.casesAFR(
+                                                        userCase,
+                                                        type,
+                                                        _postsController
+                                                            .postsList[index]
+                                                            .id,
+                                                        _postsController
+                                                            .postsList[index]
+                                                            .attributes
+                                                            .postedBy
+                                                            .username,
+                                                        token!,
+                                                        context,
+                                                      );
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 3),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          20)),
+                                                          border: Border.all(
+                                                            color: const Color(
+                                                                0xFF1D3557),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          'Adopt',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyText2!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 3),
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    20)),
+                                                        color:
+                                                            Color(0xFF1D3557),
+                                                      ),
+                                                      child: Text(
+                                                        'Adopted',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText2!
+                                                            .copyWith(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                        // default:
+                        //   if (snapshot.hasError) {
+                        //     return Center(
+                        //       child: Text(
+                        //         'Error getting posts: ${snapshot.error}}',
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //     );
+                        //   } else if (snapshot.data == null) {
+                        //     return const Center(
+                        //       child: Text(
+                        //         'No Posts Yet!',
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //     );
+                        //   } else {
+                        //     return const Center(
+                        //       child: Text(
+                        //         'Error Occured!',
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //     );
+                        //   }
+                        //     }
+                        //   },
+                        // ),
+                        ),
                   );
-                default:
-                  if (snapshot.hasError) {
-                    return Text(
-                      'Error getting posts: ${snapshot.error}}',
-                      textAlign: TextAlign.center,
-                    );
-                  } else if (snapshot.data == null) {
-                    return const Text(
-                      'No Posts Yet!',
-                      textAlign: TextAlign.center,
-                    );
-                  } else {
-                    throw 'SERVER ERROR ';
-                  }
               }
             },
           ),
