@@ -34,7 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   bool obsecure = true;
   bool cobsecure = true;
-  bool _isPartener = false;
+  bool _isPartener = true;
   bool _isLoading = false;
 
   @override
@@ -42,6 +42,8 @@ class _SignupScreenState extends State<SignupScreen> {
     radioButtonController.selectedGender.value = 'Male';
     super.initState();
   }
+
+  String representations = 'Individual';
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,7 @@ class _SignupScreenState extends State<SignupScreen> {
             key: formKey,
             child: Column(
               children: <Widget>[
-                _isPartener == false
+                _isPartener == true
                     ? Stack(
                         alignment: AlignmentDirectional.centerStart,
                         children: [
@@ -89,11 +91,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  _isPartener = true;
+                                  _isPartener = false;
                                 });
                               },
                               child: Text(
-                                'Partner',
+                                'General User',
                                 style: GoogleFonts.comfortaa(
                                   fontSize: 12,
                                   color: const Color(0xFFA5B9D6),
@@ -122,7 +124,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'General User',
+                                  'Partner',
                                   style: GoogleFonts.comfortaa(
                                     fontSize: 12,
                                     color: const Color(0xFF1D3557),
@@ -149,11 +151,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  _isPartener = false;
+                                  _isPartener = true;
                                 });
                               },
                               child: Text(
-                                'General User',
+                                'Partner',
                                 style: GoogleFonts.comfortaa(
                                   fontSize: 12,
                                   color: const Color(0xFFA5B9D6),
@@ -182,7 +184,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'Partner',
+                                  'General User',
                                   style: GoogleFonts.comfortaa(
                                     fontSize: 12,
                                     color: const Color(0xFF1D3557),
@@ -274,6 +276,53 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       )
                     : Container(),
+                _isPartener == true
+                    ? DropdownButtonFormField<String>(
+                        // value: representations,
+                        elevation: 16,
+                        icon: Icon(
+                          FontAwesomeIcons.angleDown,
+                          color: Color(0xFF1D3557),
+                        ),
+                        decoration: InputDecoration(
+                          label: Text(
+                            'Select Group',
+                            style: GoogleFonts.comfortaa(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF1D3557),
+                            ),
+                          ),
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            representations = newValue!;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "* Required";
+                          } else {
+                            return null;
+                          }
+                        },
+                        items: <String>['Individual', 'Group', 'Corporate']
+                            .map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: GoogleFonts.comfortaa(
+                                  fontSize: 17,
+                                  color: const Color(0xFF457B9D),
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                      )
+                    : Container(),
                 InputField(
                   label: 'Username',
                   hintText: 'Enter your username',
@@ -286,8 +335,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "* Required";
                     } else if (username.length < 3) {
                       return "* Username should be at least 3 characters";
-                    } else if (username.length > 15) {
-                      return "* Username should not be greater than 15 characters";
                     } else {
                       return null;
                     }
@@ -305,8 +352,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "* Required";
                     } else if (fullname.length < 3) {
                       return "* Fullname should be at least 3 characters";
-                    } else if (fullname.length > 30) {
-                      return "* Fullname should not be greater than 30 characters";
                     } else {
                       return null;
                     }
@@ -335,8 +380,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
                 InputField(
-                  label: 'Affiliation',
-                  hintText: 'Enter your affiliation',
+                  label: 'Affiliated Organisation',
+                  hintText: 'Enter your affiliated organisation',
                   // enabled: !controller.loading.value,
                   controller: affiliation,
                   obscureText: false,
@@ -346,8 +391,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "* Required";
                     } else if (value.length < 3) {
                       return "* Affiliation should be at least 3 characters";
-                    } else if (value.length > 30) {
-                      return "* Affiliation should not be greater than 30 characters";
                     } else {
                       return null;
                     }
@@ -505,6 +548,7 @@ class _SignupScreenState extends State<SignupScreen> {
             "user_type": _isPartener ? 'partner' : 'general',
             "user_group":
                 _isPartener ? radioButtonController.selectedPartener.value : '',
+            "user_category": representations,
             "gender": radioButtonController.selectedGender.value,
             "fullname": fullname.text,
           }),
@@ -524,7 +568,7 @@ class _SignupScreenState extends State<SignupScreen> {
               await SharedPreferences.getInstance();
           localStorage.setString('token', userData.token!);
           localStorage.setString('user', jsonEncode(userData));
-          Navigator.of(context).pushNamed('bottom-navy');
+          Navigator.of(context).pushNamed('welcome');
 
           // Navigator.of(context).pushReplacement(
           //   PageRouteBuilder(

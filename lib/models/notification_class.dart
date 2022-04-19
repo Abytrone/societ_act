@@ -1,17 +1,17 @@
 // To parse this JSON data, do
 //
-//     final network = networkFromJson(jsonString);
+//     final notify = notifyFromJson(jsonString);
 
 import 'dart:convert';
 
-List<Notification> notificationFromJson(String str) => List<Notification>.from(
-    json.decode(str).map((x) => Notification.fromJson(x)));
+List<Notify> notifyFromJson(String str) =>
+    List<Notify>.from(json.decode(str).map((x) => Notify.fromJson(x)));
 
-String notificationToJson(List<Notification> data) =>
+String notifyToJson(List<Notify> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Notification {
-  Notification({
+class Notify {
+  Notify({
     required this.id,
     required this.type,
     required this.notifiableType,
@@ -22,16 +22,16 @@ class Notification {
     required this.updatedAt,
   });
 
-  String id;
-  Type type;
-  String notifiableType;
-  int notifiableId;
-  Data data;
-  dynamic readAt;
-  DateTime createdAt;
-  DateTime updatedAt;
+  final String id;
+  final String type;
+  final String notifiableType;
+  final int notifiableId;
+  final Data data;
+  final dynamic readAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  factory Notification.fromJson(Map<String, dynamic> json) => Notification(
+  factory Notify.fromJson(Map<String, dynamic> json) => Notify(
         id: json["id"],
         type: json["type"],
         notifiableType: json["notifiable_type"],
@@ -58,30 +58,34 @@ class Data {
   Data({
     required this.username,
     required this.userId,
-    required this.caseLiked,
+    required this.caseCommentedOn,
     required this.message,
+    required this.caseLiked,
     required this.caseAdopted,
   });
 
-  String username;
-  int userId;
-  int caseLiked;
-  String message;
-  int caseAdopted;
+  final String? username;
+  final int? userId;
+  final int? caseCommentedOn;
+  final String? message;
+  final int? caseLiked;
+  final int? caseAdopted;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         username: json["username"],
         userId: json["user_id"],
-        caseLiked: json["case_liked"],
+        caseCommentedOn: json["case_commented_on"],
         message: json["message"],
+        caseLiked: json["case_liked"],
         caseAdopted: json["case_adopted"],
       );
 
   Map<String, dynamic> toJson() => {
         "username": username,
         "user_id": userId,
-        "case_liked": caseLiked,
+        "case_commented_on": caseCommentedOn,
         "message": message,
+        "case_liked": caseLiked,
         "case_adopted": caseAdopted,
       };
 }

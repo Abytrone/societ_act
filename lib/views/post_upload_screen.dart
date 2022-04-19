@@ -108,9 +108,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                 Map<String, String> body = {
                   'title': title.text,
                   'category': categoryID.toString(),
-                  'location': manualLocation.text == ''
-                      ? locationID.toString()
-                      : manualLocation.text,
+                  'location': locationID.toString(),
                   'description': post.text,
                   'keywords': keywords
                       .toString()
@@ -296,49 +294,6 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                                   .bodyText1!
                                   .copyWith(
                                     fontSize: 17,
-                                  ),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: TextFormField(
-                            controller: manualLocation,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                              hintText: 'Enter Location',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    fontSize: 17,
-                                  ),
-                              helperText: 'Or select from the list below',
-                              helperStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    fontSize: 12,
-                                    color: Colors.amber[900],
                                   ),
                               border: InputBorder.none,
                             ),
@@ -574,7 +529,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                             textFieldStyler: TextFieldStyler(
                               hintText: "Examples: Hospitals, School Building",
                               hintStyle: Theme.of(context).textTheme.bodyText1,
-                              helperText: "Please use space to seperate tags",
+                              helperText: "Please use space to separate tags",
                               helperStyle: Theme.of(context)
                                   .textTheme
                                   .bodyText1!

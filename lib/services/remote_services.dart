@@ -5,11 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:societ_act/models/case_class.dart';
+import 'package:societ_act/models/notification_class.dart';
 import 'package:societ_act/models/posts_class.dart';
 import 'package:societ_act/models/users_network_class.dart';
 import 'package:societ_act/services/server.dart';
-import 'package:societ_act/views/search_cases_screen.dart';
 import 'package:societ_act/views/widgets/loading_dialog.dart';
 
 class RemoteServices {
@@ -34,6 +33,82 @@ class RemoteServices {
           // List<Datum>? postsList = [];
           var postsList = postFromJson(response.body);
           return postsList;
+        } else {
+          // print('Couldn\'t get posts! ${response.statusCode}');
+          return null;
+        }
+      } else {
+        print('Address couldnt be looked at');
+        return null;
+      }
+    } on SocketException catch (_) {
+      print(_);
+      return null;
+    }
+  }
+
+  static Future<Post?> searchPosts(String search) async {
+    try {
+      // Getting user token
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var token = localStorage.getString('token');
+
+      final result = await InternetAddress.lookup(baseUrl);
+      if (result.isNotEmpty && result[0].address.isNotEmpty) {
+        var response = await client.post(
+          Uri.https(
+            baseUrl,
+            searchRoute,
+            {
+              'keywords': search,
+            },
+          ),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+        if (response.statusCode == 200) {
+          // List<Datum>? postsList = [];
+          print('Status == 200');
+          var postsList = postFromJson(response.body);
+          return postsList;
+        } else {
+          print('Status != 200');
+          // print('Couldn\'t get posts! ${response.statusCode}');
+          return null;
+        }
+      } else {
+        print('Address couldnt be looked at');
+        return null;
+      }
+    } on SocketException catch (_) {
+      print(_);
+      return null;
+    }
+  }
+
+  static Future<List<Notify>?> fetchNotifications() async {
+    try {
+      // Getting user token
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      var token = localStorage.getString('token');
+
+      final result = await InternetAddress.lookup(baseUrl);
+      if (result.isNotEmpty && result[0].address.isNotEmpty) {
+        var response = await client.get(
+          Uri.https(baseUrl, notificationRoute),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+        if (response.statusCode == 200) {
+          // List<Datum>? postsList = [];
+          var notificationList = notifyFromJson(response.body);
+          return notificationList;
         } else {
           // print('Couldn\'t get posts! ${response.statusCode}');
           return null;
@@ -117,64 +192,83 @@ class RemoteServices {
     }
   }
 
-  Future<List<Info>?> fetchCases(
+  Future<void> fetchCases(
     String location,
     String category,
     List<String> keywords,
     String token,
     BuildContext context,
   ) async {
-    // try {
-    final result = await InternetAddress.lookup(baseUrl);
-    if (result.isNotEmpty && result[0].address.isNotEmpty) {
-      final response = await http.post(
-        Uri.https(baseUrl, casesRoute, {
-          'location': location,
-          'category': category,
-          'keywords': keywords,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-      );
-      if (response.statusCode == 200) {
-        List<Info>? infosList = [];
-        var cases = caseFromJson(response.body);
-        for (var i in cases.data) {
-          Info info = Info(
-            id: i.id,
-            type: i.type,
-            attributes: i.attributes,
-          );
-          infosList.add(info);
-        }
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => SearchCasesScreen(
-              cases: infosList,
-              token: token,
-            ),
+    try {
+      final result = await InternetAddress.lookup(baseUrl);
+      if (result.isNotEmpty && result[0].address.isNotEmpty) {
+        final response = await http.post(
+          Uri.https(
+            baseUrl,
+            setupRoute,
+            {
+              'location': location,
+              'category': category,
+              'keywords': keywords,
+            },
           ),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
         );
-        await Flushbar(
-          message: "Request Successful!",
-          icon: const Icon(
-            Icons.info_outline,
-            size: 28.0,
-            color: Colors.green,
-          ),
-          backgroundColor: const Color(0xFF457B9D),
-          duration: const Duration(seconds: 3),
-          leftBarIndicatorColor: Colors.green,
-        ).show(context);
-        return infosList;
+        if (response.statusCode == 200) {
+          // List<Info>? infosList = [];
+          // var cases = caseFromJson(response.body);
+          // for (var i in cases.data) {
+          //   Info info = Info(
+          //     id: i.id,
+          //     type: i.type,
+          //     attributes: i.attributes,
+          //   );
+          //   infosList.add(info);
+          // }
+          // Navigator.of(context).pushReplacement(
+          //   PageRouteBuilder(
+          //     pageBuilder: (_, __, ___) => SearchCasesScreen(
+          //       cases: infosList,
+          //       token: token,
+          //     ),
+          //   ),
+          // );
+
+          await Flushbar(
+            message: "Interest Setup Successful!",
+            icon: const Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.green,
+            ),
+            backgroundColor: const Color(0xFF457B9D),
+            duration: const Duration(seconds: 3),
+            leftBarIndicatorColor: Colors.green,
+          ).show(context);
+          Navigator.of(context).pushNamed('bottom-navy');
+        } else {
+          //show error message
+          // print('Couldn\'t get posts! ${response.statusCode}');
+          await Flushbar(
+            message: "Request failed with status: ${response.statusCode}.",
+            icon: const Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Color(0xFFE63946),
+            ),
+            backgroundColor: const Color(0xFF457B9D),
+            duration: const Duration(seconds: 3),
+            leftBarIndicatorColor: const Color(0xFFE63946),
+          ).show(context);
+          return null;
+        }
       } else {
-        //show error message
-        // print('Couldn\'t get posts! ${response.statusCode}');
         await Flushbar(
-          message: "Request failed with status: ${response.statusCode}.",
+          message: "Please check your internet connection and try again",
           icon: const Icon(
             Icons.info_outline,
             size: 28.0,
@@ -186,9 +280,9 @@ class RemoteServices {
         ).show(context);
         return null;
       }
-    } catch (e) {
+    } on SocketException catch (_) {
       await Flushbar(
-        message: "Please check your internet connection and try again",
+        message: "Data not found!",
         icon: const Icon(
           Icons.info_outline,
           size: 28.0,
@@ -200,21 +294,7 @@ class RemoteServices {
       ).show(context);
       return null;
     }
-    // } catch (e) {
-    //   print(e);
-    //   await Flushbar(
-    //     message: "Data not found!",
-    //     icon: const Icon(
-    //       Icons.info_outline,
-    //       size: 28.0,
-    //       color: Color(0xFFE63946),
-    //     ),
-    //     backgroundColor: const Color(0xFF457B9D),
-    //     duration: const Duration(seconds: 3),
-    //     leftBarIndicatorColor: const Color(0xFFE63946),
-    //   ).show(context);
-    // }
-    return null;
+    // return null;
   }
 
   Future<bool> addCase(
@@ -600,6 +680,7 @@ class RemoteServices {
             duration: const Duration(seconds: 3),
             leftBarIndicatorColor: const Color(0xFFE63946),
           ).show(context);
+          Navigator.of(context).pop();
         }
       } else {
         // ignore: avoid_print
@@ -608,8 +689,6 @@ class RemoteServices {
       }
     } on SocketException catch (_) {
       Navigator.of(context).pushNamed('nointernet');
-      // ignore: avoid_print
-      print('Not Connected');
       await Flushbar(
         message: "The server cannot be reached at the moment!",
         icon: const Icon(

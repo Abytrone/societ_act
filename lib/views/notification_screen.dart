@@ -3,8 +3,10 @@ import 'dart:convert' as convert;
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:societ_act/controllers/notification_controller.dart';
 import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/views/followers_screen.dart';
 import 'package:societ_act/views/following_screen.dart';
@@ -79,7 +81,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               onPressed: () {
                 services.logout(context, token!);
-                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+                // Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
             )
           ],
@@ -87,8 +89,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
       },
     );
   }
-
-  RemoteServices services = RemoteServices();
 
   @override
   void initState() {
@@ -168,6 +168,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         break;
     }
   }
+
+  final RemoteServices services = RemoteServices();
+  final NotificationsController _notificationController =
+      Get.put(NotificationsController());
 
   @override
   Widget build(BuildContext context) {
@@ -341,232 +345,89 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ),
       ),
-      body: Wrap(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    color: Color(0xFF457B9D),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: CircleAvatar(
-                    maxRadius: 20,
-                    minRadius: 20,
-                    backgroundColor: Colors.green,
-                    backgroundImage: AssetImage(
-                      'assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: CircleAvatar(
-                    maxRadius: 20,
-                    minRadius: 20,
-                    backgroundColor: Colors.green,
-                    backgroundImage: AssetImage(
-                      'assets/man.png',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: CircleAvatar(
-                    maxRadius: 20,
-                    minRadius: 20,
-                    backgroundColor: Colors.green,
-                    backgroundImage: AssetImage(
-                      'assets/lucas-andrade-docd4KR_f2M-unsplash.jpg',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(
-            thickness: 1.5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Icon(
-                        Icons.person,
-                        color: Color(0xFF457B9D),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'followed you',
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                              fontSize: 12,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  '07/12/2021',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        fontSize: 12,
-                      ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 45.0, right: 10, bottom: 15),
-            child: Container(
-              // height: 50,
-              // width: 150,
-              padding: const EdgeInsets.all(13),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  style: BorderStyle.solid,
-                  color: const Color(0xFF457B9D),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(
-                          left: 10.0,
-                          right: 10,
-                        ),
-                        child: CircleAvatar(
-                          maxRadius: 20,
-                          minRadius: 20,
-                          backgroundColor: Colors.green,
-                          backgroundImage: AssetImage(
-                            'assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg',
-                          ),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Abdul Basit',
-                            style:
-                                Theme.of(context).textTheme.bodyText2!.copyWith(
-                                      fontSize: 14,
-                                    ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 9.0),
-                            child: Text(
-                              '@aby',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 10,
-                                  ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              'Partener (Activist)',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
-                            ),
+      body: Container(
+        child: FutureBuilder(
+            future: _notificationController.fetchNotifications(),
+            builder: (context, snapshot) {
+              return ListView.builder(
+                itemCount: _notificationController.notificationList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 2), // changes position of shadow
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                        top: 8, bottom: 8, right: 20, left: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        style: BorderStyle.solid,
-                        color: const Color(0xFF457B9D),
-                      ),
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: const Text('Follow'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Divider(
-            thickness: 1.5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Icon(
-                        Icons.post_add_outlined,
-                        color: Color(0xFF457B9D),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'followed your post',
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                              fontSize: 12,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '@${_notificationController.notificationList[index].data.username}',
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
-                      ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              '${_notificationController.notificationList[index].data.message}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    // color: Colors.grey,
+                                    fontSize: 13,
+                                  ),
+                            ),
+                          ]),
                     ),
-                  ],
+                  );
+                },
+              );
+            }),
+      ),
+    );
+  }
+}
+
+class NotificationScreenWidget extends StatelessWidget {
+  const NotificationScreenWidget({
+    Key? key,
+    required NotificationsController notificationController,
+  })  : _notificationController = notificationController,
+        super(key: key);
+
+  final NotificationsController _notificationController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            children: const [
+              Padding(
+                padding: EdgeInsets.only(left: 15.0),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Color(0xFF457B9D),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Text(
-                  '07/12/2021',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        fontSize: 12,
-                      ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(
-                  left: 10.0,
-                  right: 10,
-                ),
+                padding: EdgeInsets.all(10.0),
                 child: CircleAvatar(
                   maxRadius: 20,
                   minRadius: 20,
@@ -576,33 +437,252 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width > 340 ? 305 : 340,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage(
-                          'assets/anto-meneghini-YiaDJAjD1S0-unsplash.jpg',
-                          // scale: 10,
-                        ),
-                      ),
-                    ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: CircleAvatar(
+                  maxRadius: 20,
+                  minRadius: 20,
+                  backgroundColor: Colors.green,
+                  backgroundImage: AssetImage(
+                    'assets/man.png',
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text('View Post'),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: CircleAvatar(
+                  maxRadius: 20,
+                  minRadius: 20,
+                  backgroundColor: Colors.green,
+                  backgroundImage: AssetImage(
+                    'assets/lucas-andrade-docd4KR_f2M-unsplash.jpg',
                   ),
-                ],
+                ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        const Divider(
+          thickness: 1.5,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 15),
+                    child: Icon(
+                      Icons.person,
+                      color: Color(0xFF457B9D),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'followed you',
+                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            fontSize: 12,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Text(
+                '07/12/2021',
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      fontSize: 12,
+                    ),
+              ),
+            ),
+          ],
+        ),
+        ListView.builder(
+            itemCount: _notificationController.notificationList.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:
+                    const EdgeInsets.only(left: 45.0, right: 10, bottom: 15),
+                child: Container(
+                  // height: 50,
+                  // width: 150,
+                  padding: const EdgeInsets.all(13),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      style: BorderStyle.solid,
+                      color: const Color(0xFF457B9D),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(
+                              left: 10.0,
+                              right: 10,
+                            ),
+                            child: CircleAvatar(
+                              maxRadius: 20,
+                              minRadius: 20,
+                              backgroundColor: Colors.green,
+                              backgroundImage: AssetImage(
+                                'assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg',
+                              ),
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Abdul Basit',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                      fontSize: 14,
+                                    ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 9.0),
+                                child: Text(
+                                  '@aby',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontSize: 10,
+                                      ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                child: Text(
+                                  'Partener (Activist)',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontSize: 12,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                            top: 8, bottom: 8, right: 20, left: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            style: BorderStyle.solid,
+                            color: const Color(0xFF457B9D),
+                          ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: const Text('Follow'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+        const Divider(
+          thickness: 1.5,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 15),
+                    child: Icon(
+                      Icons.post_add_outlined,
+                      color: Color(0xFF457B9D),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'followed your post',
+                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            fontSize: 12,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Text(
+                '07/12/2021',
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      fontSize: 12,
+                    ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 10.0,
+                right: 10,
+              ),
+              child: CircleAvatar(
+                maxRadius: 20,
+                minRadius: 20,
+                backgroundColor: Colors.green,
+                backgroundImage: AssetImage(
+                  'assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg',
+                ),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width > 340 ? 305 : 340,
+                  height: 200,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'assets/anto-meneghini-YiaDJAjD1S0-unsplash.jpg',
+                        // scale: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text('View Post'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

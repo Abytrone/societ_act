@@ -42,9 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getUserInfo();
 
-    Timer.periodic(const Duration(seconds: 10), (timer) {
-      _postsController.fetchPosts();
-    });
+    // Timer.periodic(const Duration(seconds: 10), (timer) {
+    //   _postsController.fetchPosts();
+    // });
   }
 
   String? token;
@@ -110,9 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Initial Selected Value
   String dropdownValue = '';
-
   PostsController _postsController = Get.put(PostsController());
-
   bool adopt = false;
   // AppBar pop up menu actions
   void selectedItem(BuildContext context, item) {
@@ -420,26 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Container(
           color: const Color(0xFFF1FAEE),
-          child:
-              // StreamBuilder<List<Datum>?>(
-              //   stream: services.getData(),
-              //   builder: (context, snapshot) {
-              //     switch (snapshot.connectionState) {
-              //       case ConnectionState.waiting:
-              //         return const Center(
-              //           child: CircularProgressIndicator(color: Colors.blue),
-              //         );
-              //       case ConnectionState.none:
-              //         return const Center(
-              //           child: Text('No Posts at the moment!'),
-              //         );
-              //       case ConnectionState.active:
-              //         return const Center(
-              //           child: CircularProgressIndicator(),
-              //         );
-              //       case ConnectionState.done:
-              //         return
-              FutureBuilder(
+          child: FutureBuilder(
             future: _postsController.fetchPosts(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {

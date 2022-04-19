@@ -4,7 +4,11 @@ import 'package:societ_act/services/remote_services.dart';
 
 class PostsController extends GetxController {
   var isLoading = true.obs;
+  var isLoading2 = true.obs;
   var postsList = <Datum>[].obs;
+  var searchList = <Datum>[].obs;
+
+  String message = '';
 
   @override
   void onInit() {
@@ -32,6 +36,25 @@ class PostsController extends GetxController {
       }
     } finally {
       isLoading(false);
+    }
+  }
+
+  Future<void> searchPosts(String search) async {
+    try {
+      isLoading2(true);
+      var posts = await RemoteServices.searchPosts(search);
+      if (posts != null) {
+        searchList.value = posts.data;
+        print(posts.data);
+        isLoading2(false);
+      } else {
+        print('else');
+        isLoading2(false);
+        return null;
+      }
+    } finally {
+      print('finally');
+      isLoading2(false);
     }
   }
 }
