@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:societ_act/controllers/radiobutton_controller.dart';
 import 'package:societ_act/models/error_class.dart';
 import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/server.dart';
+import 'package:societ_act/views/welcom_screen.dart';
 import 'package:societ_act/views/widgets/input_field.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
@@ -564,28 +564,33 @@ class _SignupScreenState extends State<SignupScreen> {
             _isLoading = false;
           });
           var userData = User.fromJson(jsonResponse);
-          SharedPreferences localStorage =
-              await SharedPreferences.getInstance();
-          localStorage.setString('token', userData.token!);
-          localStorage.setString('user', jsonEncode(userData));
-          Navigator.of(context).pushNamed('welcome');
 
-          // Navigator.of(context).pushReplacement(
-          //   PageRouteBuilder(
-          //     pageBuilder: (_, __, ___) => const BottomNavy(),
-          //   ),
-          // );
-          await Flushbar(
-            message: "Welcome " + userData.data.fullname.toString(),
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
+          // SharedPreferences localStorage =
+          //     await SharedPreferences.getInstance();
+          // localStorage.setString('token', userData.token!);
+          // localStorage.setString('user', jsonEncode(userData));
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return new WelcomeScreen(
+                  token: userData.token,
+                  fullname: '${userData.data.fullname}',
+                );
+              },
             ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
+          );
+
+          // await Flushbar(
+          //   message: "Welcome " + userData.data.fullname.toString(),
+          //   icon: const Icon(
+          //     Icons.info_outline,
+          //     size: 28.0,
+          //     color: Colors.green,
+          //   ),
+          //   backgroundColor: const Color(0xFF457B9D),
+          //   duration: const Duration(seconds: 3),
+          //   leftBarIndicatorColor: Colors.green,
+          // ).show(context);
         } else {
           // RESPONSE IF STATUS IS NOT 200
           if (response.statusCode == 500) {

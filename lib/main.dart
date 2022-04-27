@@ -7,7 +7,6 @@ import 'package:societ_act/views/home_screen.dart';
 import 'package:societ_act/views/login_screen.dart';
 import 'package:societ_act/views/onboarding_screen.dart';
 import 'package:societ_act/views/signup_screen.dart';
-import 'package:societ_act/views/welcom_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,10 +50,7 @@ class MyApp extends StatelessWidget {
         'login': (BuildContext context) => const LoginScreen(),
         'signup': (BuildContext context) => const SignupScreen(),
         'home': (BuildContext context) => const HomeScreen(),
-        'welcome': (BuildContext context) => const WelcomeScreen(),
-        // 'location': (BuildContext context) => const LocationScreen(),
         'bottom-navy': (BuildContext context) => const BottomNavy(),
-        // 'postupload': (BuildContext context) => const PostUploadScreen(),
       },
     );
   }

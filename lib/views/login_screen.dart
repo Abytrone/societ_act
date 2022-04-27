@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:societ_act/models/user_class.dart';
+import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/services/server.dart';
-import 'package:societ_act/views/bottom_navy.dart';
 import 'package:societ_act/views/widgets/input_field.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 
@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // final LoginController controller = Get.put(LoginController());
   final GlobalKey<FormState>? _formKey = GlobalKey<FormState>();
   bool obsecure = true;
-
+  final RemoteServices _services = RemoteServices();
   bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -40,11 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
               fit: BoxFit.cover,
             ),
             Container(
-              // height: MediaQuery.of(context).size.height >= 843.4
-              //     ? MediaQuery.of(context).size.height - 200
-              //     : MediaQuery.of(context).size.height < 843.4
-              //         ? MediaQuery.of(context).size.height + 200
-              //         : MediaQuery.of(context).size.height + 100,
               padding: const EdgeInsets.all(40),
               decoration:
                   const BoxDecoration(color: Color(0xFFEDF1F4), boxShadow: [
@@ -56,8 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
                     'Log In',
@@ -268,27 +261,26 @@ class _LoginScreenState extends State<LoginScreen> {
             setState(() {
               _isLoading = false;
             });
-            SharedPreferences localStorage =
-                await SharedPreferences.getInstance();
-            localStorage.setString('token', userData.token!);
-            localStorage.setString('user', jsonEncode(userData));
-
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const BottomNavy(),
-              ),
-            );
-            await Flushbar(
-              message: "Login Successfull!",
-              icon: const Icon(
-                Icons.info_outline,
-                size: 28.0,
-                color: Colors.green,
-              ),
-              backgroundColor: const Color(0xFF457B9D),
-              duration: const Duration(seconds: 3),
-              leftBarIndicatorColor: Colors.green,
-            ).show(context);
+            if (userData.data.verificationStatus == 'unverified') {
+              _services.sendEmailVerification(context, userData.token);
+            } else {
+              SharedPreferences localStorage =
+                  await SharedPreferences.getInstance();
+              localStorage.setString('token', userData.token);
+              localStorage.setString('user', jsonEncode(userData));
+              Navigator.of(context).pushReplacementNamed('bottom-navy');
+              await Flushbar(
+                message: "Login Successfull!",
+                icon: const Icon(
+                  Icons.info_outline,
+                  size: 28.0,
+                  color: Colors.green,
+                ),
+                backgroundColor: const Color(0xFF457B9D),
+                duration: const Duration(seconds: 3),
+                leftBarIndicatorColor: Colors.green,
+              ).show(context);
+            }
           }
         } else {
           setState(() {

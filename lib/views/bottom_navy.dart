@@ -1,7 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:societ_act/views/home_screen.dart';
-import 'package:societ_act/views/messages_screen.dart';
 import 'package:societ_act/views/notification_screen.dart';
 import 'package:societ_act/views/search_screen.dart';
 
@@ -40,7 +39,7 @@ class _BottomNavyState extends State<BottomNavy> {
           children: const <Widget>[
             HomeScreen(),
             SearchScreen(),
-            MessagesScreen(),
+            // MessagesScreen(),
             NotificationScreen(),
           ],
         ),
@@ -74,17 +73,17 @@ class _BottomNavyState extends State<BottomNavy> {
             activeColor: const Color(0xFF457B9D),
             inactiveColor: const Color(0xFFB4B4B4),
           ),
-          BottomNavyBarItem(
-            title: Text(
-              'Messages',
-              style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    fontSize: 15,
-                  ),
-            ),
-            icon: const Icon(Icons.mail_outline),
-            activeColor: const Color(0xFF457B9D),
-            inactiveColor: const Color(0xFFB4B4B4),
-          ),
+          // BottomNavyBarItem(
+          //   title: Text(
+          //     'Messages',
+          //     style: Theme.of(context).textTheme.bodyText1!.copyWith(
+          //           fontSize: 15,
+          //         ),
+          //   ),
+          //   icon: const Icon(Icons.mail_outline),
+          //   activeColor: const Color(0xFF457B9D),
+          //   inactiveColor: const Color(0xFFB4B4B4),
+          // ),
           BottomNavyBarItem(
             title: Text(
               'Notifications',

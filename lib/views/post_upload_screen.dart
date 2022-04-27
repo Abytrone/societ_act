@@ -158,10 +158,11 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     maxRadius: 30,
                     minRadius: 20,
-                    backgroundImage: AssetImage('assets/man.png'),
+                    backgroundImage:
+                        NetworkImage('${widget.user!.data.picture}'),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -171,77 +172,16 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(widget.user!.data.fullname!),
                       ),
-                      Row(children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              border: Border.all(
-                                color: const Color(0xFF1D3557),
-                              ),
-                            ),
-                            child: Text(
-                              'Category',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
-                            ),
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          '@${widget.user!.data.username!}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(fontSize: 12),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              border: Border.all(
-                                color: const Color(0xFF1D3557),
-                              ),
-                            ),
-                            child: Text(
-                              'Keywords',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              border: Border.all(
-                                color: const Color(0xFF1D3557),
-                              ),
-                            ),
-                            child: Text(
-                              'Locations',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ]),
+                      ),
                     ],
                   )
                 ],

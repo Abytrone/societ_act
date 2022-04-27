@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () {
                 services.logout(context, token!);
-                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+                // Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
             )
           ],
@@ -593,7 +593,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 );
                                               }).toList(),
                                             )
-                                          else
+                                          else if (_postsController
+                                                  .postsList[index]
+                                                  .attributes
+                                                  .isAdopted !=
+                                              '1')
                                             DropdownButton<String>(
                                               icon:
                                                   const Icon(Icons.more_horiz),
@@ -638,6 +642,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 );
                                               }).toList(),
                                             )
+                                          else
+                                            Container(),
                                         ],
                                       ),
                                       InkWell(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -192,13 +193,14 @@ class RemoteServices {
     }
   }
 
-  Future<void> fetchCases(
-    String location,
-    String category,
-    List<String> keywords,
-    String token,
-    BuildContext context,
-  ) async {
+  Future<void> setInterest({
+    required String location,
+    required String category,
+    required List<String> keywords,
+    required String token,
+    required String fullname,
+    required BuildContext context,
+  }) async {
     try {
       final result = await InternetAddress.lookup(baseUrl);
       if (result.isNotEmpty && result[0].address.isNotEmpty) {
@@ -219,40 +221,18 @@ class RemoteServices {
           },
         );
         if (response.statusCode == 200) {
-          // List<Info>? infosList = [];
-          // var cases = caseFromJson(response.body);
-          // for (var i in cases.data) {
-          //   Info info = Info(
-          //     id: i.id,
-          //     type: i.type,
-          //     attributes: i.attributes,
-          //   );
-          //   infosList.add(info);
-          // }
-          // Navigator.of(context).pushReplacement(
-          //   PageRouteBuilder(
-          //     pageBuilder: (_, __, ___) => SearchCasesScreen(
-          //       cases: infosList,
-          //       token: token,
-          //     ),
-          //   ),
-          // );
-
-          await Flushbar(
-            message: "Interest Setup Successful!",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
-          Navigator.of(context).pushNamed('bottom-navy');
+          CoolAlert.show(
+            context: context,
+            type: CoolAlertType.success,
+            title: "Welcome " + fullname,
+            text:
+                'Please check and verify your email in your inbox/spam to login',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pushReplacementNamed('login');
+            },
+          );
         } else {
           //show error message
-          // print('Couldn\'t get posts! ${response.statusCode}');
           await Flushbar(
             message: "Request failed with status: ${response.statusCode}.",
             icon: const Icon(
@@ -631,6 +611,71 @@ class RemoteServices {
 
     /// if failed, you can do nothing
     // return success? !isLiked:isLiked;
+  }
+
+  // send email method
+  void sendEmailVerification(BuildContext context, String token) async {
+    // send email from the server ...
+    try {
+      final result = await InternetAddress.lookup(baseUrl)
+          .timeout(const Duration(seconds: 3));
+      if (result.isNotEmpty && result[0].address.isNotEmpty) {
+        final response = await http.get(
+          Uri.https(baseUrl, emailRoute),
+          headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+        print(response.body);
+        if (response.statusCode == 200) {
+          await Flushbar(
+            message: "Please check your inbox to verify your email",
+            icon: const Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.green,
+            ),
+            backgroundColor: const Color(0xFF457B9D),
+            duration: const Duration(seconds: 3),
+            leftBarIndicatorColor: Colors.green,
+          ).show(context);
+          // Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed('login');
+        } else {
+          await Flushbar(
+            message: "Request failed with status: ${response.statusCode}.",
+            icon: const Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Color(0xFFE63946),
+            ),
+            backgroundColor: const Color(0xFF457B9D),
+            duration: const Duration(seconds: 3),
+            leftBarIndicatorColor: const Color(0xFFE63946),
+          ).show(context);
+          Navigator.of(context).pop();
+        }
+      } else {
+        // ignore: avoid_print
+        print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
+        // Navigator.of(context).pushNamed('nointernet');
+      }
+    } on SocketException catch (_) {
+      Navigator.of(context).pushNamed('nointernet');
+      await Flushbar(
+        message: "The server cannot be reached at the moment!",
+        icon: const Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Color(0xFFE63946),
+        ),
+        backgroundColor: const Color(0xFF457B9D),
+        duration: const Duration(seconds: 3),
+        leftBarIndicatorColor: const Color(0xFFE63946),
+      ).show(context);
+    }
   }
 
   // Logout method

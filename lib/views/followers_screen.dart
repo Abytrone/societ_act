@@ -178,7 +178,7 @@ class _FollowersScreenState extends State<FollowersScreen> {
                                     type,
                                     snapshot.data![index].id,
                                     snapshot.data![index].attributes.username,
-                                    widget.user.token!,
+                                    widget.user.token,
                                     context,
                                   );
                                 },

@@ -349,53 +349,59 @@ class _NotificationScreenState extends State<NotificationScreen> {
         child: FutureBuilder(
             future: _notificationController.fetchNotifications(),
             builder: (context, snapshot) {
-              return ListView.builder(
-                itemCount: _notificationController.notificationList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '@${_notificationController.notificationList[index].data.username}',
-                              style: Theme.of(context).textTheme.bodyText2,
+              return snapshot.data == null
+                  ? Center(
+                      child: Text('No Notifications yet'),
+                    )
+                  : ListView.builder(
+                      itemCount:
+                          _notificationController.notificationList.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 5),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              '${_notificationController.notificationList[index].data.message}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    // color: Colors.grey,
-                                    fontSize: 13,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '@${_notificationController.notificationList[index].data.username}',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
                                   ),
-                            ),
-                          ]),
-                    ),
-                  );
-                },
-              );
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    '${_notificationController.notificationList[index].data.message}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                          // color: Colors.grey,
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ]),
+                          ),
+                        );
+                      },
+                    );
             }),
       ),
     );

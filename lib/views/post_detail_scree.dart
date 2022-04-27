@@ -74,18 +74,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ),
         actions: [
-          PopupMenuButton<int>(
-            color: const Color(0xFFEDF1F4),
-            icon: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.menu,
-                color: Color(0xFF457B9D),
+          if (widget.user!.data.username ==
+              widget.posts.attributes.postedBy.username)
+            PopupMenuButton<int>(
+              color: const Color(0xFFEDF1F4),
+              icon: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.menu,
+                  color: Color(0xFF457B9D),
+                ),
               ),
-            ),
-            itemBuilder: (context) => [
-              if (widget.user!.data.username ==
-                  widget.posts.attributes.postedBy.username)
+              itemBuilder: (context) => [
                 PopupMenuItem<int>(
                   value: 0,
                   child: Row(
@@ -105,8 +105,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
                     ],
                   ),
-                )
-              else
+                ),
                 PopupMenuItem<int>(
                   value: 1,
                   child: Row(
@@ -127,9 +126,65 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ],
                   ),
                 ),
-            ],
-            onSelected: (item) => selectedItem(context, item),
-          ),
+              ],
+              onSelected: (item) => selectedItem(context, item),
+            )
+          else if (widget.posts.attributes.isAdopted != '1')
+            PopupMenuButton<int>(
+              color: const Color(0xFFEDF1F4),
+              icon: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.menu,
+                  color: Color(0xFF457B9D),
+                ),
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Resolve Case",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.add_task,
+                        color: Color(0xFF457B9D),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Adopt Case",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (item) => selectedItem(context, item),
+            )
+          else
+            Container(),
         ],
         centerTitle: true,
         backgroundColor: const Color(0xFFF1FAEE),
@@ -295,7 +350,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText2!.copyWith(
                                     height: 1.3,
-                                    fontSize: 13,
+                                    fontSize: 15,
                                   ),
                           textAlign: TextAlign.justify,
                         ),
@@ -359,7 +414,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 15, bottom: 10),
+                        padding: const EdgeInsets.only(top: 5, bottom: 5),
                         child: SizedBox(
                           height: 1,
                           child: Container(
@@ -462,7 +517,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 15),
+                        padding: const EdgeInsets.only(top: 5, bottom: 5),
                         child: SizedBox(
                           height: 1,
                           child: Container(
@@ -470,91 +525,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           ),
                         ),
                       ),
-                      // Comment form
-                      // Form(
-                      //   key: formKey,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(8),
-                      //     child: Container(
-                      //       padding: const EdgeInsets.all(8),
-                      //       decoration: BoxDecoration(
-                      //         color: Colors.white,
-                      //         borderRadius:
-                      //             const BorderRadius.all(Radius.circular(10)),
-                      //         boxShadow: [
-                      //           BoxShadow(
-                      //             color: Colors.grey.withOpacity(0.2),
-                      //             spreadRadius: 3,
-                      //             blurRadius: 5,
-                      //             offset: const Offset(
-                      //                 0, 2), // changes position of shadow
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       child: Column(
-                      //         children: [
-                      //           TextFormField(
-                      //             validator: (value) {
-                      //               if (value!.isEmpty) {
-                      //                 return '* Please type some text before you post';
-                      //               } else {
-                      //                 return null;
-                      //               }
-                      //             },
-                      //             controller: comment,
-                      //             maxLines: 3,
-                      //             textCapitalization:
-                      //                 TextCapitalization.sentences,
-                      //             decoration: InputDecoration(
-                      //               hintText:
-                      //                   'You can share your comments here...\n\n\n',
-                      //               hintStyle: Theme.of(context)
-                      //                   .textTheme
-                      //                   .bodyText1!
-                      //                   .copyWith(
-                      //                     fontSize: 15,
-                      //                   ),
-                      //               border: InputBorder.none,
-                      //             ),
-                      //           ),
-                      //           Row(
-                      //             crossAxisAlignment: CrossAxisAlignment.end,
-                      //             mainAxisAlignment: MainAxisAlignment.end,
-                      //             children: [
-                      //               InkWell(
-                      //                 onTap: () {
-                      //                   if (formKey!.currentState!.validate()) {
-                      //                     _postsController.fetchPosts();
-                      //                     services.addComment(
-                      //                       widget.posts.id,
-                      //                       comment.text,
-                      //                       widget.token!,
-                      //                       context,
-                      //                     );
-                      //                     comment.clear();
-                      //                   }
-                      //                 },
-                      //                 child: Container(
-                      //                   padding: const EdgeInsets.all(5),
-                      //                   decoration: const BoxDecoration(
-                      //                     color: Color(0xFF457B9D),
-                      //                     borderRadius: BorderRadius.all(
-                      //                         Radius.circular(20)),
-                      //                   ),
-                      //                   child: const Icon(
-                      //                     Icons.telegram,
-                      //                     color: Colors.white,
-                      //                     size: 30,
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       // ---------START OF COMMENTS SECTION-----------------------
                       widget.posts.attributes.comments[0].message ==
                               'No comment'
@@ -646,7 +616,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                       .bodyText2,
                                                 ),
                                                 const SizedBox(
-                                                  height: 3,
+                                                  height: 2,
                                                 ),
                                                 Row(
                                                   children: [
@@ -670,7 +640,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            bottom: 8, left: 60),
+                                            bottom: 5, left: 60),
                                         child: Text(
                                           _postsController
                                               .postsList[widget.index]
@@ -681,13 +651,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                               .textTheme
                                               .bodyText2!
                                               .copyWith(
-                                                fontSize: 13,
+                                                fontSize: 15,
                                               ),
                                         ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            left: 60, bottom: 8),
+                                            left: 60, bottom: 5),
                                         child: Text(
                                           _postsController
                                               .postsList[widget.index]
@@ -739,11 +709,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       // ),
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            top: 8, bottom: 8),
+                                            top: 5, bottom: 5),
                                         child: SizedBox(
                                           height: 1,
                                           child: Container(
-                                            color: const Color(0xFFD7d7d7),
+                                            color:
+                                                Color.fromARGB(255, 92, 70, 70),
                                           ),
                                         ),
                                       ),
@@ -752,6 +723,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 },
                               ),
                             ),
+                      const SizedBox(
+                        height: 30,
+                      ),
                     ],
                   ),
                   //------------END OF COMMENTS SECTION---------------------
@@ -760,61 +734,63 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               Positioned(
                 bottom: 0,
                 height: 50,
-                left: 10,
-                right: 10,
+                left: 5,
+                right: 5,
                 child: Form(
                   key: formKey,
                   child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 3,
-                          blurRadius: 5,
-                          offset:
-                              const Offset(0, 2), // changes position of shadow
+                    padding: const EdgeInsets.only(top: 7),
+                    child: TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 50,
+                      controller: comment,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return null;
+                        }
+                        return null;
+                      },
+                      textCapitalization: TextCapitalization.sentences,
+                      scrollPadding: const EdgeInsets.all(5),
+                      decoration: InputDecoration(
+                        hintText: 'Type something',
+                        hintStyle: GoogleFonts.comfortaa(
+                          color: Colors.black38,
                         ),
-                      ],
-                    ),
-                    child: Center(
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return '* Please type some text before you send';
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: comment,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: 'You can share your comments here...',
-                          hintStyle:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontSize: 13,
-                                  ),
-                          border: InputBorder.none,
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              if (formKey!.currentState!.validate()) {
-                                _postsController.fetchPosts();
-                                services.addComment(
-                                  widget.posts.id,
-                                  comment.text,
-                                  widget.token!,
-                                  context,
-                                );
-                                comment.clear();
-                              }
-                            },
-                            iconSize: 30,
-                            icon: Icon(
-                              Icons.telegram_outlined,
+                        suffixIcon: IconButton(
+                          // color: Colors.blue,
+                          padding: const EdgeInsets.all(5),
+                          icon: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue,
+                            ),
+                            child: Image(
+                              image: AssetImage('assets/send.png'),
+                              width: 25,
+                              color: Colors.white,
                             ),
                           ),
+                          onPressed: () {
+                            if (comment.text != '') {
+                              if (formKey!.currentState!.validate()) {
+                                services.addComment(widget.posts.id,
+                                    comment.text, widget.token!, context);
+                                _postsController.fetchPosts();
+                                comment.clear();
+                              }
+                            }
+                          },
+                        ),
+                        contentPadding: const EdgeInsets.all(10),
+                        fillColor: Colors.white,
+                        filled: true,
+                        isCollapsed: true,
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                       ),
                     ),

@@ -1,59 +1,25 @@
-import 'dart:convert' as convert;
-import 'package:another_flushbar/flushbar.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:societ_act/models/category_class.dart';
-import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/server.dart';
 import 'package:societ_act/views/location_screen.dart';
 import 'package:societ_act/views/widgets/primary_button.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({Key? key, required this.token, required this.fullname})
+      : super(key: key);
+  final String token;
+  final String fullname;
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  @override
-  void initState() {
-    _getUserInfo();
-    super.initState();
-  }
-
-  String? token;
-  User? user;
-
-  void _getUserInfo() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var userJson = localStorage.getString('user')!;
-    token = localStorage.getString('token');
-    if (userJson != '') {
-      setState(() {
-        var jsonResponse = convert.jsonDecode(userJson);
-        user = User.fromJson(jsonResponse);
-      });
-    } else {
-      await Flushbar(
-        message: "Error loading user information.",
-        icon: const Icon(
-          Icons.info_outline,
-          size: 28.0,
-          color: Color(0xFFE63946),
-        ),
-        backgroundColor: const Color(0xFF457B9D),
-        duration: const Duration(seconds: 3),
-        leftBarIndicatorColor: const Color(0xFFE63946),
-      ).show(context);
-    }
-  }
-
   String? category = '';
   int? categoryID = 0;
   List<String> keywords = [];
@@ -220,7 +186,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               headers: {
                                 'Accept': '*/*',
                                 'Content-Type': 'application/json',
-                                'Authorization': 'Bearer $token'
+                                'Authorization': 'Bearer ${widget.token}'
                               },
                             ),
                           );
@@ -353,7 +319,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 categoryID: categoryID,
                                 category: category,
                                 keywords: keywords,
-                                token: token!,
+                                token: widget.token,
+                                fullname: widget.fullname,
                               ),
                             ),
                           );

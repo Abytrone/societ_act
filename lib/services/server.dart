@@ -16,7 +16,7 @@ const String likeRoute = '/api/v1/cases/like';
 const String networkRoute = '/api/v1/network';
 const String ffRoute = '/api/v1/user';
 const String notificationRoute = '/api/v1/user/notifications/all';
-
+const String emailRoute = '/api/v1/email/resend';
 // Routes with Dio() doesn't accept concatination, hence [baseUrl] with [route]
 const String categoryRoute =
     'https://societyacts.abdulsitech.com/api/v1/cases/categories/fetch';

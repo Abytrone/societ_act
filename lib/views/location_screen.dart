@@ -14,12 +14,14 @@ class LocationScreen extends StatefulWidget {
     required this.categoryID,
     required this.category,
     required this.token,
+    required this.fullname,
     required this.keywords,
   }) : super(key: key);
 
   final int? categoryID;
   final String? category;
   final String token;
+  final String fullname;
   final List<String> keywords;
 
   @override
@@ -277,12 +279,13 @@ class _LocationScreenState extends State<LocationScreen> {
                       child: PrimaryButton(
                         text: 'Next',
                         onTap: () {
-                          service.fetchCases(
-                            locationID.toString(),
-                            widget.categoryID.toString(),
-                            widget.keywords,
-                            widget.token,
-                            context,
+                          service.setInterest(
+                            location: locationID.toString(),
+                            category: widget.categoryID.toString(),
+                            keywords: widget.keywords,
+                            token: widget.token,
+                            fullname: widget.fullname,
+                            context: context,
                           );
                         },
                       ),
@@ -296,111 +299,4 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     );
   }
-
-  // Future<Case?> login() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-
-  //   try {
-  //     final result = await InternetAddress.lookup(baseUrl);
-  //     if (result.isNotEmpty && result[0].address.isNotEmpty) {
-  //       final response = await http.post(
-  //         Uri.https(baseUrl, casesRoute, {
-  //           'location': locationID.toString(),
-  //           'category': widget.categoryID.toString(),
-  //           'keywords': widget.keywords,
-  //         }),
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Accept': 'application/json',
-  //           'Authorization': 'Bearer ${widget.token}'
-  //         },
-  //       );
-
-  //       if (response.statusCode == 200) {
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //         var jsonResponse = convert.jsonDecode(response.body);
-  //         var caseData = caseFromJson(response.body);
-  //         Navigator.of(context).pushReplacement(
-  //           PageRouteBuilder(
-  //             pageBuilder: (_, __, ___) => SearchCasesScreen(
-  //               cases: caseData,
-  //             ),
-  //           ),
-  //         );
-  //         await Flushbar(
-  //           message: "Search Successful!",
-  //           icon: const Icon(
-  //             Icons.info_outline,
-  //             size: 28.0,
-  //             color: Colors.green,
-  //           ),
-  //           backgroundColor: const Color(0xFF457B9D),
-  //           duration: const Duration(seconds: 3),
-  //           leftBarIndicatorColor: Colors.green,
-  //         ).show(context);
-
-  //         return caseData;
-  //       } else {
-  //         // RESPONSE IF STATUS IS NOT 200
-  //         // print('Request failed with status: ${response.statusCode}.');
-  //         await Flushbar(
-  //           message: "Request failed with status: ${response.statusCode}.",
-  //           icon: const Icon(
-  //             Icons.info_outline,
-  //             size: 28.0,
-  //             color: Color(0xFFE63946),
-  //           ),
-  //           backgroundColor: const Color(0xFF457B9D),
-  //           duration: const Duration(seconds: 3),
-  //           leftBarIndicatorColor: const Color(0xFFE63946),
-  //         ).show(context);
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //         return null;
-  //       }
-  //     } else {
-  //       // print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
-  //       // Navigator.of(context).pushNamed('nointernet');
-  //       await Flushbar(
-  //         message: "Please check your internet connection and try again",
-  //         icon: const Icon(
-  //           Icons.info_outline,
-  //           size: 28.0,
-  //           color: Color(0xFFE63946),
-  //         ),
-  //         backgroundColor: const Color(0xFF457B9D),
-  //         duration: const Duration(seconds: 3),
-  //         leftBarIndicatorColor: const Color(0xFFE63946),
-  //       ).show(context);
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //       return null;
-  //     }
-  //   } on SocketException catch (_) {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //     // Navigator.of(context).pushNamed('nointernet');
-  //     // print(
-  //     //     'SERVER CANNOT BE REACHED AT THE MOMENT, PLEASE CHECK YOUR INTERNET AND TRY AGAIN. $_');
-  //     await Flushbar(
-  //       message: "Please check your internet connection and try again",
-  //       icon: const Icon(
-  //         Icons.info_outline,
-  //         size: 28.0,
-  //         color: Color(0xFFE63946),
-  //       ),
-  //       backgroundColor: const Color(0xFF457B9D),
-  //       duration: const Duration(seconds: 3),
-  //       leftBarIndicatorColor: const Color(0xFFE63946),
-  //     ).show(context);
-  //     return null;
-  //   }
-  // }
 }

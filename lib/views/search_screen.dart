@@ -11,7 +11,6 @@ import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/views/post_detail_scree.dart';
 import 'dart:convert' as convert;
-import 'package:societ_act/views/welcom_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -63,8 +62,8 @@ class _SearchScreenState extends State<SearchScreen> {
   void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const WelcomeScreen()));
+        // Navigator.of(context).push(
+        //     MaterialPageRoute(builder: (context) => const WelcomeScreen()));
         break;
     }
   }

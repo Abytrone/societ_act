@@ -241,7 +241,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                                 type,
                                 snapshot.data![index].id,
                                 snapshot.data![index].attributes.username,
-                                widget.user.token!,
+                                widget.user.token,
                                 context,
                               );
                             },
