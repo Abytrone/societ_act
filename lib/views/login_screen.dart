@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:societ_act/controllers/controller.dart';
 import 'package:societ_act/models/user_class.dart';
 import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/services/server.dart';
@@ -21,7 +23,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-  // final LoginController controller = Get.put(LoginController());
+  final Controller _controller = Get.find<Controller>();
   final GlobalKey<FormState>? _formKey = GlobalKey<FormState>();
   bool obsecure = true;
   final RemoteServices _services = RemoteServices();
@@ -269,6 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
               localStorage.setString('token', userData.token);
               localStorage.setString('user', jsonEncode(userData));
               Navigator.of(context).pushReplacementNamed('bottom-navy');
+              _controller.sendNotification(context);
               await Flushbar(
                 message: "Login Successfull!",
                 icon: const Icon(
@@ -331,7 +334,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ).show(context);
     }
   }
-}
-  // STATEFUL WIDGET CLOSING
+} // STATEFUL WIDGET CLOSING
 
 

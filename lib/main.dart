@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:societ_act/controller_bindings.dart';
 import 'package:societ_act/views/bottom_navy.dart';
 import 'package:societ_act/views/home_screen.dart';
 import 'package:societ_act/views/login_screen.dart';
@@ -9,6 +12,13 @@ import 'package:societ_act/views/onboarding_screen.dart';
 import 'package:societ_act/views/signup_screen.dart';
 
 void main() {
+  AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'welcome',
+      channelName: 'Welcome Notification',
+      channelDescription: 'Notification for welcome',
+    ),
+  ]);
   runApp(const MyApp());
 }
 
@@ -18,8 +28,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Societ Act',
+    return GetMaterialApp(
+      initialBinding: ControllerBindings(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // primarySwatch: Color(0xFF457B9D),

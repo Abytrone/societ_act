@@ -1,4 +1,4 @@
-package com.example.societ_act
+package com.aby.society_acts
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'dart:convert' as convert;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:like_button/like_button.dart';
+import 'package:new_version/new_version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:societ_act/controllers/posts_controller.dart';
@@ -41,10 +42,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _getUserInfo();
+    final newVersion = NewVersion(androidId: 'com.aby.society_acts');
+    advancedStatusCheck(newVersion);
+  }
 
-    // Timer.periodic(const Duration(seconds: 10), (timer) {
-    //   _postsController.fetchPosts();
-    // });
+  advancedStatusCheck(NewVersion newVersion) async {
+    final status = await newVersion.getVersionStatus();
+    if (status != null) {
+      // debugPrint(status.releaseNotes);
+      // debugPrint(status.appStoreLink);
+      // debugPrint(status.localVersion);
+      // debugPrint(status.storeVersion);
+      // debugPrint(status.canUpdate.toString());
+      if (status.canUpdate == true) {
+        newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogText:
+              'Current version: ${status.localVersion}\nUpdate version: ${status.storeVersion}\n\n${status.releaseNotes}',
+        );
+      }
+    }
   }
 
   String? token;
