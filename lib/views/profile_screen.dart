@@ -41,396 +41,419 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // ],
         centerTitle: true,
         backgroundColor: const Color(0xFFF1FAEE),
-        title: Text(
-          'Profile',
-          style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                fontSize: 15,
-              ),
-        ),
+        title: LayoutBuilder(builder: (context, constraints) {
+          return Text(
+            'Profile',
+            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  fontSize: constraints.maxWidth < 768 ? 15 : 20,
+                ),
+          );
+        }),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 170,
-              padding: const EdgeInsets.all(40),
-              decoration: const BoxDecoration(
-                color: Color(0xFFEDF1F4),
-              ),
-            ),
-            Container(
-              width: 370,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF7F7F7),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            children: <Widget>[
+              Container(
+                height: constraints.maxWidth < 768 ? 170 : 270,
+                padding: const EdgeInsets.all(40),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFEDF1F4),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xFF616263),
-                    offset: Offset(0, -1),
-                    blurRadius: 2.0,
-                  ),
-                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+              Container(
+                width: constraints.maxWidth < 768
+                    ? 370
+                    : constraints.maxWidth - 30,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F7F7),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF616263),
+                      offset: Offset(0, -1),
+                      blurRadius: 2.0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: CircleAvatar(
+                                maxRadius: constraints.maxWidth < 768 ? 30 : 50,
+                                minRadius: constraints.maxWidth < 768 ? 30 : 50,
+                                backgroundColor: Colors.green,
+                                backgroundImage: NetworkImage(
+                                    // widget.user.data. ==
+                                    //         'null'
+                                    //     ?
+                                    'https://societyacts.abdulsitech.com/users/user.png'
+                                    // : snapshot
+                                    //     .data![index]
+                                    //     .attributes
+                                    //     .postedBy
+                                    //     .picture!,
+                                    ),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.user.data.fullname!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 17
+                                            : 25,
+                                      ),
+                                ),
+                                const SizedBox(
+                                  height: 3,
+                                ),
+                                Text(
+                                  '@${widget.user.data.username}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                        color: const Color(0xFF457B9D),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5, bottom: 20),
+                      child: SizedBox(
+                        height: 0.5,
+                        child: Container(
+                          color: Colors.black38,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Column(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: CircleAvatar(
-                              maxRadius: 30,
-                              minRadius: 30,
-                              backgroundColor: Colors.green,
-                              backgroundImage: NetworkImage(
-                                  // widget.user.data. ==
-                                  //         'null'
-                                  //     ?
-                                  'https://societyacts.abdulsitech.com/users/user.png'
-                                  // : snapshot
-                                  //     .data![index]
-                                  //     .attributes
-                                  //     .postedBy
-                                  //     .picture!,
+                          widget.user.data.group == null
+                              ? Container()
+                              : Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Partner:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w900,
+                                              fontSize:
+                                                  constraints.maxWidth < 768
+                                                      ? 15
+                                                      : 20,
+                                            ),
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        '${widget.user.data.group}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w900,
+                                              fontSize:
+                                                  constraints.maxWidth < 768
+                                                      ? 15
+                                                      : 20,
+                                            ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Gender:',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  '${widget.user.data.gender}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                              ],
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.user.data.fullname!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      overflow: TextOverflow.ellipsis,
-                                      fontSize: 17,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 3,
-                              ),
-                              Text(
-                                '@${widget.user.data.username}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      fontSize: 15,
-                                      color: const Color(0xFF457B9D),
-                                    ),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Email:',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  '${widget.user.data.email}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Affiliated Company:',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  '${widget.user.data.affiliatedWith}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: constraints.maxWidth < 768
+                                            ? 15
+                                            : 20,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 20),
-                    child: SizedBox(
-                      height: 0.5,
-                      child: Container(
-                        color: Colors.black38,
-                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Column(
-                      children: [
-                        widget.user.data.group == null
-                            ? Container()
-                            : Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Partner:',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2!
-                                          .copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 15,
-                                          ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      '${widget.user.data.group}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 15,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Gender:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                '${widget.user.data.gender}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Email:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                '${widget.user.data.email}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Affiliated Company:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                '${widget.user.data.affiliatedWith}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${widget.user.data.followers}',
-                          style:
-                              Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'Followers',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          '${widget.user.data.following}',
-                          style:
-                              Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'Following',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          '${widget.user.data.following}',
-                          style:
-                              Theme.of(context).textTheme.bodyText2!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'Adopted Cases',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10, bottom: 20, left: 10, right: 10),
-                    child: SizedBox(
-                      height: 0.5,
-                      child: Container(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
                       child: Row(
                         children: [
-                          const Icon(
-                            FontAwesomeIcons.networkWired,
-                            color: Color(0xFF1D3557),
-                            size: 20,
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
                           Text(
-                            'Network',
+                            '${widget.user.data.followers}',
+                            style:
+                                Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
+                                    ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Followers',
                             style:
                                 Theme.of(context).textTheme.bodyText1!.copyWith(
                                       fontWeight: FontWeight.w900,
-                                      fontSize: 15,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
+                                    ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${widget.user.data.following}',
+                            style:
+                                Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
+                                    ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Following',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
+                                    ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${widget.user.data.following}',
+                            style:
+                                Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
+                                    ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Adopted Cases',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 12 : 15,
                                     ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, bottom: 20),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          FontAwesomeIcons.user,
-                          color: Color(0xFF1D3557),
-                          size: 20,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10, bottom: 20, left: 10, right: 10),
+                      child: SizedBox(
+                        height: 0.5,
+                        child: Container(
+                          color: Colors.black38,
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          'Account',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 15,
-                                  ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, bottom: 50),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          FontAwesomeIcons.cogs,
-                          color: Color(0xFF1D3557),
-                          size: 20,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          'Help Center',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                    InkWell(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20, bottom: 20),
+                        child: Row(
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.networkWired,
+                              color: Color(0xFF1D3557),
+                              size: constraints.maxWidth < 768 ? 20 : 30,
+                            ),
+                            const SizedBox(width: 20),
+                            Text(
+                              'Network',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                    fontSize:
+                                        constraints.maxWidth < 768 ? 15 : 20,
                                   ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, bottom: 20),
+                      child: Row(
+                        children: [
+                          Icon(
+                            FontAwesomeIcons.user,
+                            color: Color(0xFF1D3557),
+                            size: constraints.maxWidth < 768 ? 20 : 30,
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            'Account',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 15 : 20,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, bottom: 50),
+                      child: Row(
+                        children: [
+                          Icon(
+                            FontAwesomeIcons.cogs,
+                            color: Color(0xFF1D3557),
+                            size: constraints.maxWidth < 768 ? 20 : 30,
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            'Help Center',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize:
+                                          constraints.maxWidth < 768 ? 15 : 20,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

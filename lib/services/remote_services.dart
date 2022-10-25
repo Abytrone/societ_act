@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,30 +18,23 @@ class RemoteServices {
       // Getting user token
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var token = localStorage.getString('token');
-
-      final result = await InternetAddress.lookup(baseUrl);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        var response = await client.get(
-          Uri.https(baseUrl, postsRoute),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          // List<Datum>? postsList = [];
-          var postsList = postFromJson(response.body);
-          return postsList;
-        } else {
-          // print('Couldn\'t get posts! ${response.statusCode}');
-          return null;
-        }
+      var response = await client.get(
+        Uri.parse(baseUrl + postsRoute),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        // List<Datum>? postsList = [];
+        var postsList = postFromJson(response.body);
+        return postsList;
       } else {
-        print('Address couldnt be looked at');
+        // print('Couldn\'t get posts! ${response.statusCode}');
         return null;
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       print(_);
       return null;
     }
@@ -54,37 +46,27 @@ class RemoteServices {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var token = localStorage.getString('token');
 
-      final result = await InternetAddress.lookup(baseUrl);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        var response = await client.post(
-          Uri.https(
-            baseUrl,
-            searchRoute,
-            {
-              'keywords': search,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          // List<Datum>? postsList = [];
-          print('Status == 200');
-          var postsList = postFromJson(response.body);
-          return postsList;
-        } else {
-          print('Status != 200');
-          // print('Couldn\'t get posts! ${response.statusCode}');
-          return null;
-        }
+      var response = await client.post(
+        Uri.parse(
+          baseUrl + searchRoute + '?keywords=$search',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        // List<Datum>? postsList = [];
+        print('Status == 200');
+        var postsList = postFromJson(response.body);
+        return postsList;
       } else {
-        print('Address couldnt be looked at');
+        print('Status != 200');
+        // print('Couldn\'t get posts! ${response.statusCode}');
         return null;
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       print(_);
       return null;
     }
@@ -96,29 +78,23 @@ class RemoteServices {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var token = localStorage.getString('token');
 
-      final result = await InternetAddress.lookup(baseUrl);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        var response = await client.get(
-          Uri.https(baseUrl, notificationRoute),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          // List<Datum>? postsList = [];
-          var notificationList = notifyFromJson(response.body);
-          return notificationList;
-        } else {
-          // print('Couldn\'t get posts! ${response.statusCode}');
-          return null;
-        }
+      var response = await client.get(
+        Uri.parse(baseUrl + notificationRoute),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        // List<Datum>? postsList = [];
+        var notificationList = notifyFromJson(response.body);
+        return notificationList;
       } else {
-        print('Address couldnt be looked at');
+        // print('Couldn\'t get posts! ${response.statusCode}');
         return null;
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       print(_);
       return null;
     }
@@ -132,65 +108,59 @@ class RemoteServices {
     // Getting user token
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var token = localStorage.getString('token');
+    if (type == '') {
+      var response = await client.get(
+        Uri.parse(baseUrl + networkRoute),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
-    final result = await InternetAddress.lookup(baseUrl);
-    if (result.isNotEmpty && result[0].address.isNotEmpty) {
-      if (type == '') {
-        var response = await client.get(
-          Uri.https(baseUrl, networkRoute),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-
-        if (response.statusCode == 200) {
-          List<NData>? peopleList = [];
-          var posts = networkFromJson(response.body);
-          for (var i in posts.data) {
-            NData person = NData(
-              id: i.id,
-              type: i.type,
-              attributes: i.attributes,
-            );
-            peopleList.add(person);
-          }
-          return peopleList;
-        } else {
-          // print('Couldn\'t get posts! ${response.statusCode}');
-          return null;
+      if (response.statusCode == 200) {
+        List<NData>? peopleList = [];
+        var posts = networkFromJson(response.body);
+        for (var i in posts.data) {
+          NData person = NData(
+            id: i.id,
+            type: i.type,
+            attributes: i.attributes,
+          );
+          peopleList.add(person);
         }
-      } else if (type != '') {
-        var response = await client.get(
-          Uri.https(baseUrl, '$ffRoute/$type/$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-
-        if (response.statusCode == 200) {
-          List<NData>? peopleList = [];
-          var posts = networkFromJson(response.body);
-          for (var i in posts.data) {
-            NData person = NData(
-              id: i.id,
-              type: i.type,
-              attributes: i.attributes,
-            );
-            peopleList.add(person);
-          }
-          return peopleList;
-        } else {
-          return null;
-        }
+        return peopleList;
+      } else {
+        // print('Couldn\'t get posts! ${response.statusCode}');
+        return null;
       }
-      return null;
-    } else {
-      return null;
+    } else if (type != '') {
+      var response = await client.get(
+        Uri.parse(baseUrl + '$ffRoute/$type/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<NData>? peopleList = [];
+        var posts = networkFromJson(response.body);
+        for (var i in posts.data) {
+          NData person = NData(
+            id: i.id,
+            type: i.type,
+            attributes: i.attributes,
+          );
+          peopleList.add(person);
+        }
+        return peopleList;
+      } else {
+        return null;
+      }
     }
+    return null;
   }
 
   Future<void> setInterest({
@@ -202,53 +172,33 @@ class RemoteServices {
     required BuildContext context,
   }) async {
     try {
-      final result = await InternetAddress.lookup(baseUrl);
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        final response = await http.post(
-          Uri.https(
-            baseUrl,
-            setupRoute,
-            {
-              'location': location,
-              'category': category,
-              'keywords': keywords,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
+      final response = await http.post(
+        Uri.parse(
+          baseUrl +
+              setupRoute +
+              '?location=$location&category=$category&keywords=$keywords',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.success,
+          title: "Welcome " + fullname,
+          text:
+              'Please check and verify your email in your inbox/spam to login',
+          onConfirmBtnTap: () {
+            Navigator.of(context).pushReplacementNamed('login');
           },
         );
-        if (response.statusCode == 200) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.success,
-            title: "Welcome " + fullname,
-            text:
-                'Please check and verify your email in your inbox/spam to login',
-            onConfirmBtnTap: () {
-              Navigator.of(context).pushReplacementNamed('login');
-            },
-          );
-        } else {
-          //show error message
-          await Flushbar(
-            message: "Request failed with status: ${response.statusCode}.",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Color(0xFFE63946),
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: const Color(0xFFE63946),
-          ).show(context);
-          return null;
-        }
       } else {
+        //show error message
         await Flushbar(
-          message: "Please check your internet connection and try again",
+          message: "Request failed with status: ${response.statusCode}.",
           icon: const Icon(
             Icons.info_outline,
             size: 28.0,
@@ -260,7 +210,7 @@ class RemoteServices {
         ).show(context);
         return null;
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       await Flushbar(
         message: "Data not found!",
         icon: const Icon(
@@ -296,7 +246,7 @@ class RemoteServices {
     );
     try {
       var request =
-          http.MultipartRequest('POST', Uri.https(baseUrl, postsRoute))
+          http.MultipartRequest('POST', Uri.parse(baseUrl + postsRoute))
             ..fields.addAll(body)
             ..headers.addAll(headers)
             ..files.add(await http.MultipartFile.fromPath('picture', filepath));
@@ -358,9 +308,8 @@ class RemoteServices {
   ) async {
     try {
       final response = await http.get(
-        Uri.https(
-          baseUrl,
-          "$createCommentRoute/$id/$comment",
+        Uri.parse(
+          baseUrl + "$createCommentRoute/$id/$comment",
         ),
         headers: {
           'Content-Type': 'application/json',
@@ -425,9 +374,8 @@ class RemoteServices {
     try {
       if (userCase == 'case') {
         final response = await http.get(
-          Uri.https(
-            baseUrl,
-            "$cases/$type/$id",
+          Uri.parse(
+            baseUrl + "$cases/$type/$id",
           ),
           headers: {
             'Content-Type': 'application/json',
@@ -492,9 +440,8 @@ class RemoteServices {
         }
       } else if (userCase == 'user') {
         final response = await http.get(
-          Uri.https(
-            baseUrl,
-            "$users/$type/$id",
+          Uri.parse(
+            baseUrl + "$users/$type/$id",
           ),
           headers: {
             'Content-Type': 'application/json',
@@ -562,9 +509,8 @@ class RemoteServices {
     try {
       if (isLiked == false) {
         final response = await http.get(
-          Uri.https(
-            baseUrl,
-            "$likeRoute/$id",
+          Uri.parse(
+            baseUrl + "$likeRoute/$id",
           ),
           headers: {
             'Content-Type': 'application/json',
@@ -617,52 +563,44 @@ class RemoteServices {
   void sendEmailVerification(BuildContext context, String token) async {
     // send email from the server ...
     try {
-      final result = await InternetAddress.lookup(baseUrl)
-          .timeout(const Duration(seconds: 3));
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        final response = await http.get(
-          Uri.https(baseUrl, emailRoute),
-          headers: {
-            'Accept': '*/*',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        print(response.body);
-        if (response.statusCode == 200) {
-          await Flushbar(
-            message: "Please check your inbox to verify your email",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
-          // Navigator.of(context).pop();
-          Navigator.of(context).pushReplacementNamed('login');
-        } else {
-          await Flushbar(
-            message: "Request failed with status: ${response.statusCode}.",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Color(0xFFE63946),
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: const Color(0xFFE63946),
-          ).show(context);
-          Navigator.of(context).pop();
-        }
+      final response = await http.get(
+        Uri.parse(baseUrl + emailRoute),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        await Flushbar(
+          message: "Please check your inbox to verify your email",
+          icon: const Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Colors.green,
+          ),
+          backgroundColor: const Color(0xFF457B9D),
+          duration: const Duration(seconds: 3),
+          leftBarIndicatorColor: Colors.green,
+        ).show(context);
+        // Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed('login');
       } else {
-        // ignore: avoid_print
-        print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
-        // Navigator.of(context).pushNamed('nointernet');
+        await Flushbar(
+          message: "Request failed with status: ${response.statusCode}.",
+          icon: const Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Color(0xFFE63946),
+          ),
+          backgroundColor: const Color(0xFF457B9D),
+          duration: const Duration(seconds: 3),
+          leftBarIndicatorColor: const Color(0xFFE63946),
+        ).show(context);
+        Navigator.of(context).pop();
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       Navigator.of(context).pushNamed('nointernet');
       await Flushbar(
         message: "The server cannot be reached at the moment!",
@@ -682,57 +620,48 @@ class RemoteServices {
   void logout(BuildContext context, String token) async {
     // logout from the server ...
     try {
-      final result = await InternetAddress.lookup(baseUrl)
-          .timeout(const Duration(seconds: 3));
-      if (result.isNotEmpty && result[0].address.isNotEmpty) {
-        final response = await http.post(
-          Uri.https(baseUrl, logoutRoute),
-          headers: {
-            'Accept': '*/*',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        );
-        if (response.statusCode == 200) {
-          SharedPreferences localStorage =
-              await SharedPreferences.getInstance();
-          localStorage.remove('user');
-          localStorage.remove('token');
-          Navigator.of(context).popAndPushNamed('login');
-          // print('LOGGED OUT SUCCESSFULLY!');
-          await Flushbar(
-            message: "Logged out Successfully!",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Colors.green,
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: Colors.green,
-          ).show(context);
-        } else {
-          // print(
-          //     'COULD NOT LOGOUT. PLEASE TRY AGAIN LATER! ${response.statusCode}');
-          await Flushbar(
-            message: "Request failed with status: ${response.statusCode}.",
-            icon: const Icon(
-              Icons.info_outline,
-              size: 28.0,
-              color: Color(0xFFE63946),
-            ),
-            backgroundColor: const Color(0xFF457B9D),
-            duration: const Duration(seconds: 3),
-            leftBarIndicatorColor: const Color(0xFFE63946),
-          ).show(context);
-          Navigator.of(context).pop();
-        }
+      final response = await http.post(
+        Uri.parse(baseUrl + logoutRoute),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      if (response.statusCode == 200) {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.remove('user');
+        localStorage.remove('token');
+        Navigator.of(context).popAndPushNamed('login');
+        // print('LOGGED OUT SUCCESSFULLY!');
+        await Flushbar(
+          message: "Logged out Successfully!",
+          icon: const Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Colors.green,
+          ),
+          backgroundColor: const Color(0xFF457B9D),
+          duration: const Duration(seconds: 3),
+          leftBarIndicatorColor: Colors.green,
+        ).show(context);
       } else {
-        // ignore: avoid_print
-        print('ADDRESS LOOKED BUT SOMETHING BAD HAPPENED');
-        // Navigator.of(context).pushNamed('nointernet');
+        // print(
+        //     'COULD NOT LOGOUT. PLEASE TRY AGAIN LATER! ${response.statusCode}');
+        await Flushbar(
+          message: "Request failed with status: ${response.statusCode}.",
+          icon: const Icon(
+            Icons.info_outline,
+            size: 28.0,
+            color: Color(0xFFE63946),
+          ),
+          backgroundColor: const Color(0xFF457B9D),
+          duration: const Duration(seconds: 3),
+          leftBarIndicatorColor: const Color(0xFFE63946),
+        ).show(context);
+        Navigator.of(context).pop();
       }
-    } on SocketException catch (_) {
+    } catch (_) {
       Navigator.of(context).pushNamed('nointernet');
       await Flushbar(
         message: "The server cannot be reached at the moment!",

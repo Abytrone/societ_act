@@ -81,24 +81,26 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                'Cancel',
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF457B9D),
-                    ),
+        leading: LayoutBuilder(builder: (context, constraints) {
+          return InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  'Cancel',
+                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                        fontSize: constraints.maxWidth < 768 ? 11 : 14,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF457B9D),
+                      ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }),
         actions: [
           InkWell(
             onTap: () {
@@ -126,486 +128,506 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                 post.clear();
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Color(0xFF1D3557),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  child: Text(
-                    'Post',
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          fontSize: 12,
-                          color: Colors.white,
-                        ),
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Color(0xFF1D3557),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Text(
+                      'Post',
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: constraints.maxWidth < 768 ? 12 : 15,
+                            color: Colors.white,
+                          ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ],
         backgroundColor: const Color(0xFFF1FAEE),
       ),
-      body: Container(
-        color: const Color(0xFFF1FAEE),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    maxRadius: 30,
-                    minRadius: 20,
-                    backgroundImage:
-                        NetworkImage('${widget.user!.data.picture}'),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(widget.user!.data.fullname!),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          '@${widget.user!.data.username!}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontSize: 12),
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          color: const Color(0xFFF1FAEE),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      maxRadius: constraints.maxWidth < 768 ? 30 : 40,
+                      minRadius: constraints.maxWidth < 768 ? 30 : 40,
+                      backgroundImage:
+                          NetworkImage('${widget.user!.data.picture}'),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            widget.user!.data.fullname!,
+                            style: TextStyle(
+                                fontSize: constraints.maxWidth < 768 ? 15 : 20),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '@${widget.user!.data.username!}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(
+                                    fontSize:
+                                        constraints.maxWidth < 768 ? 12 : 15),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            const Divider(
-              height: 10,
-              color: Color.fromARGB(255, 87, 87, 87),
-            ),
-            Expanded(
-              flex: 1,
-              child: SingleChildScrollView(
-                child: Form(
-                  key: formKey!,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value == null) {
-                                return '* Required';
-                              } else {
-                                return null;
-                              }
-                            },
-                            controller: title,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                              hintText: 'Enter Title',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    fontSize: 17,
-                                  ),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 10, right: 10, bottom: 5),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: DropdownSearch<Location>(
-                            // validator: (value) {
-                            //   if (value == null) {
-                            //     return '* Required';
-                            //   } else {
-                            //     return null;
-                            //   }
-                            // },
-                            errorBuilder: (BuildContext context, value, index) {
-                              return Center(
-                                child: Text(
-                                  'No Data',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .copyWith(
-                                        fontSize: 12,
-                                      ),
-                                ),
-                              );
-                            },
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: 'Select Location',
-                              labelStyle: Theme.of(context).textTheme.bodyText1,
-                              isCollapsed: true,
-                              border: InputBorder.none,
-                            ),
-                            popupTitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    'Select Location',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2,
-                                  ),
+              const Divider(
+                height: 10,
+                color: Color.fromARGB(255, 87, 87, 87),
+              ),
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey!,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 12, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
                                 ),
                               ],
                             ),
-                            popupBackgroundColor: const Color(0xFFEDF1F4),
-                            dropDownButton: const Icon(
-                              FontAwesomeIcons.angleDown,
-                              color: Color(0xFF457B9D),
+                            child: TextFormField(
+                              validator: (value) {
+                                if (value == null) {
+                                  return '* Required';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              controller: title,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: InputDecoration(
+                                hintText: 'Enter Title',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                      fontSize: 17,
+                                    ),
+                                border: InputBorder.none,
+                              ),
                             ),
-                            showSearchBox: true,
-                            mode: Mode.DIALOG,
-                            onFind: (filter) async {
-                              var response = await Dio().get(locationRoute,
-                                  options: Options(headers: {
-                                    'Accept': '*/*',
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer ${widget.token}'
-                                  }));
-                              var models =
-                                  Location.fromJsonList(response.data['data']);
-                              return models;
-                            },
-                            onChanged: (data) {
-                              setState(() {
-                                location = data?.name;
-                                locationID = data?.id;
-                              });
-                              // print(data);
-                            },
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 10, right: 10, bottom: 5),
-                        child: Container(
+                        Padding(
                           padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: DropdownSearch<Category>(
-                            validator: (value) {
-                              if (value == null) {
-                                return '* Required';
-                              } else {
-                                return null;
-                              }
-                            },
-                            errorBuilder: (BuildContext context, value, index) {
-                              return Center(
-                                child: Text(
-                                  'No Data',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .copyWith(
-                                        fontSize: 12,
-                                      ),
-                                ),
-                              );
-                            },
-                            dropdownSearchBaseStyle:
-                                Theme.of(context).textTheme.bodyText1,
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: 'Select Category',
-                              labelStyle: Theme.of(context).textTheme.bodyText1,
-                              border: InputBorder.none,
-                              isCollapsed: true,
-                            ),
-                            popupTitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Select Category',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2,
-                                  ),
+                              top: 5, left: 10, right: 10, bottom: 5),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 12, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
                                 ),
                               ],
                             ),
-                            popupBackgroundColor: const Color(0xFFEDF1F4),
-                            dropDownButton: const Icon(
-                              FontAwesomeIcons.angleDown,
-                              color: Color(0xFF457B9D),
+                            child: DropdownSearch<Location>(
+                              // validator: (value) {
+                              //   if (value == null) {
+                              //     return '* Required';
+                              //   } else {
+                              //     return null;
+                              //   }
+                              // },
+                              errorBuilder:
+                                  (BuildContext context, value, index) {
+                                return Center(
+                                  child: Text(
+                                    'No Data',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                          fontSize: 12,
+                                        ),
+                                  ),
+                                );
+                              },
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: 'Select Location',
+                                labelStyle:
+                                    Theme.of(context).textTheme.bodyText1,
+                                isCollapsed: true,
+                                border: InputBorder.none,
+                              ),
+                              popupTitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      'Select Location',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              popupBackgroundColor: const Color(0xFFEDF1F4),
+                              dropDownButton: const Icon(
+                                FontAwesomeIcons.angleDown,
+                                color: Color(0xFF457B9D),
+                              ),
+                              showSearchBox: true,
+                              mode: Mode.DIALOG,
+                              onFind: (filter) async {
+                                var response = await Dio().get(locationRoute,
+                                    options: Options(headers: {
+                                      'Accept': '*/*',
+                                      'Content-Type': 'application/json',
+                                      'Authorization': 'Bearer ${widget.token}'
+                                    }));
+                                var models = Location.fromJsonList(
+                                    response.data['data']);
+                                return models;
+                              },
+                              onChanged: (data) {
+                                setState(() {
+                                  location = data?.name;
+                                  locationID = data?.id;
+                                });
+                                // print(data);
+                              },
                             ),
-                            showSearchBox: true,
-                            mode: Mode.DIALOG,
-                            onFind: (filter) async {
-                              var response = await Dio().get(
-                                categoryRoute,
-                                options: Options(
-                                  headers: {
-                                    'Accept': '*/*',
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer ${widget.token}'
-                                  },
-                                ),
-                              );
-                              var models =
-                                  Category.fromJsonList(response.data['data']);
-                              return models;
-                            },
-                            onChanged: (data) {
-                              setState(() {
-                                category = data?.name;
-                                categoryID = data?.id;
-                              });
-                              // print(data);
-                            },
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 10, right: 10, bottom: 5),
-                        child: Container(
+                        Padding(
                           padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: TextFieldTags(
-                            initialTags: const [],
-                            tagsStyler: TagsStyler(
-                              tagMargin: const EdgeInsets.only(right: 4.0),
-                              tagCancelIcon: const Icon(Icons.cancel,
-                                  size: 15.0, color: Colors.red),
-                              tagCancelIconPadding:
-                                  const EdgeInsets.only(left: 4.0, top: 2.0),
-                              tagPadding: const EdgeInsets.only(
-                                  top: 2.0, bottom: 4.0, left: 8.0, right: 4.0),
-                              tagDecoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Colors.grey.shade300,
+                              top: 5, left: 10, right: 10, bottom: 5),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 12, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
                                 ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
-                              tagTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: Color(0xFF457B9D)),
+                              ],
                             ),
-                            textSeparators: const [" "],
-                            textFieldStyler: TextFieldStyler(
-                              hintText: "Examples: Hospitals, School Building",
-                              hintStyle: Theme.of(context).textTheme.bodyText1,
-                              helperText: "Please use space to separate tags",
-                              helperStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    fontSize: 12,
-                                    color: Colors.amber[900],
+                            child: DropdownSearch<Category>(
+                              validator: (value) {
+                                if (value == null) {
+                                  return '* Required';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              errorBuilder:
+                                  (BuildContext context, value, index) {
+                                return Center(
+                                  child: Text(
+                                    'No Data',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                          fontSize: 12,
+                                        ),
                                   ),
-                              contentPadding:
-                                  const EdgeInsets.only(bottom: 5, top: 12),
-                              textFieldBorder: InputBorder.none,
-                              textFieldFocusedBorder: InputBorder.none,
+                                );
+                              },
+                              dropdownSearchBaseStyle:
+                                  Theme.of(context).textTheme.bodyText1,
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: 'Select Category',
+                                labelStyle:
+                                    Theme.of(context).textTheme.bodyText1,
+                                border: InputBorder.none,
+                                isCollapsed: true,
+                              ),
+                              popupTitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Select Category',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              popupBackgroundColor: const Color(0xFFEDF1F4),
+                              dropDownButton: const Icon(
+                                FontAwesomeIcons.angleDown,
+                                color: Color(0xFF457B9D),
+                              ),
+                              showSearchBox: true,
+                              mode: Mode.DIALOG,
+                              onFind: (filter) async {
+                                var response = await Dio().get(
+                                  categoryRoute,
+                                  options: Options(
+                                    headers: {
+                                      'Accept': '*/*',
+                                      'Content-Type': 'application/json',
+                                      'Authorization': 'Bearer ${widget.token}'
+                                    },
+                                  ),
+                                );
+                                var models = Category.fromJsonList(
+                                    response.data['data']);
+                                return models;
+                              },
+                              onChanged: (data) {
+                                setState(() {
+                                  category = data?.name;
+                                  categoryID = data?.id;
+                                });
+                                // print(data);
+                              },
                             ),
-                            onDelete: (tag) {
-                              // print('onDelete: $tag');
-                              setState(() {
-                                keywords.remove(tag);
-                              });
-                            },
-                            onTag: (tag) {
-                              // print('onTag: $tag');
-                            },
-                            validator: (tag) {
-                              // print('validator: $tag');
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5, left: 10, right: 10, bottom: 5),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 12, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: TextFieldTags(
+                              initialTags: const [],
+                              tagsStyler: TagsStyler(
+                                tagMargin: const EdgeInsets.only(right: 4.0),
+                                tagCancelIcon: const Icon(Icons.cancel,
+                                    size: 15.0, color: Colors.red),
+                                tagCancelIconPadding:
+                                    const EdgeInsets.only(left: 4.0, top: 2.0),
+                                tagPadding: const EdgeInsets.only(
+                                    top: 2.0,
+                                    bottom: 4.0,
+                                    left: 8.0,
+                                    right: 4.0),
+                                tagDecoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                ),
+                                tagTextStyle: const TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xFF457B9D)),
+                              ),
+                              textSeparators: const [" "],
+                              textFieldStyler: TextFieldStyler(
+                                hintText:
+                                    "Examples: Hospitals, School Building",
+                                hintStyle:
+                                    Theme.of(context).textTheme.bodyText1,
+                                helperText: "Please use space to separate tags",
+                                helperStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                      fontSize: 12,
+                                      color: Colors.amber[900],
+                                    ),
+                                contentPadding:
+                                    const EdgeInsets.only(bottom: 5, top: 12),
+                                textFieldBorder: InputBorder.none,
+                                textFieldFocusedBorder: InputBorder.none,
+                              ),
+                              onDelete: (tag) {
+                                // print('onDelete: $tag');
+                                setState(() {
+                                  keywords.remove(tag);
+                                });
+                              },
+                              onTag: (tag) {
+                                // print('onTag: $tag');
+                              },
+                              validator: (tag) {
+                                // print('validator: $tag');
 
-                              if (tag == '') {
-                                return "* Required";
-                              } else {
-                                keywords.add(tag);
-                              }
-                              return null;
-                            },
+                                if (tag == '') {
+                                  return "* Required";
+                                } else {
+                                  keywords.add(tag);
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      // Post Text
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 12, top: 8, bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 2), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                validator: (value) {
-                                  if (value == null) {
-                                    return '* Required';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                controller: post,
-                                maxLines: 10,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      'Let the world know the issue you care about...\n\n\n\n\n\n\n\n\n\n\n',
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .copyWith(
-                                        fontSize: 15,
-                                      ),
-                                  border: InputBorder.none,
+                        // Post Text
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 12, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 3,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 2), // changes position of shadow
                                 ),
-                              ),
-                              const Divider(
-                                height: 10,
-                                color: Color.fromARGB(255, 87, 87, 87),
-                              ),
-                              InkWell(
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return '* Required';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  controller: post,
+                                  maxLines: 10,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
+                                  decoration: InputDecoration(
+                                    hintText:
+                                        'Let the world know the issue you care about...\n\n\n\n\n\n\n\n\n\n\n',
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                          fontSize: 15,
+                                        ),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                                const Divider(
+                                  height: 10,
+                                  color: Color.fromARGB(255, 87, 87, 87),
+                                ),
+                                InkWell(
+                                  onTap: (() => selectFile()),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: const [
+                                      Text(
+                                        'Select image',
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(8),
+                                        child: Icon(
+                                          FontAwesomeIcons.fileImage,
+                                          color: Color(0xFF1D3557),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Post image to be uploaded
+                        _platformFile == null
+                            ? Container()
+                            : InkWell(
                                 onTap: (() => selectFile()),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: const [
-                                    Text(
-                                      'Select image',
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Icon(
-                                        FontAwesomeIcons.fileImage,
-                                        color: Color(0xFF1D3557),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    height:
+                                        constraints.maxWidth < 768 ? 230 : 400,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: Image.file(
+                                          _file!,
+                                        ).image,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Post image to be uploaded
-                      _platformFile == null
-                          ? Container()
-                          : InkWell(
-                              onTap: (() => selectFile()),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  height: 230,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: Image.file(
-                                        _file!,
-                                      ).image,
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

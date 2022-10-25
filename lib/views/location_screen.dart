@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:societ_act/models/location_class.dart';
 import 'package:societ_act/services/remote_services.dart';
 import 'package:societ_act/services/server.dart';
@@ -56,246 +55,256 @@ class _LocationScreenState extends State<LocationScreen> {
           ),
         ],
         backgroundColor: const Color(0xFFF1FAEE),
-        title: Text(
-          'SocietyActs',
-          style: GoogleFonts.comfortaa(
-            color: const Color(0xFF457B9D),
-            fontSize: 15,
-          ),
-        ),
+        title: LayoutBuilder(builder: (context, constraints) {
+          return Text(
+            'SocietyActs',
+            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  fontSize: constraints.maxWidth < 768 ? 15 : 20,
+                ),
+          );
+        }),
       ),
       backgroundColor: const Color(0xFFEDF1F4),
       body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 200,
-              padding: const EdgeInsets.all(40),
-              decoration: const BoxDecoration(
-                color: Color(0xFFEDF1F4),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Color(0xFF616263),
-                //     offset: Offset(0, -1),
-                //     blurRadius: 10.0,
-                //   )
-                // ],
-              ),
-            ),
-            Container(
-              width: 370,
-              // padding: const EdgeInsets.all(30),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF7F7F7),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            children: <Widget>[
+              Container(
+                height: 200,
+                padding: const EdgeInsets.all(40),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFEDF1F4),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Color(0xFF616263),
+                  //     offset: Offset(0, -1),
+                  //     blurRadius: 10.0,
+                  //   )
+                  // ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xFF616263),
-                    offset: Offset(0, -1),
-                    blurRadius: 2.0,
-                  ),
-                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 30, right: 30, top: 30),
-                    child: Text(
-                      'Select Location',
-                      style: Theme.of(context).textTheme.headline1!.copyWith(
-                            fontSize: 20,
-                          ),
-                    ),
+              Container(
+                width: constraints.maxWidth < 768
+                    ? 370
+                    : constraints.maxWidth - 30,
+                // padding: const EdgeInsets.all(30),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F7F7),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10, left: 30, right: 20, bottom: 5),
-                    child: Container(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF616263),
+                      offset: Offset(0, -1),
+                      blurRadius: 2.0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
                       padding:
-                          const EdgeInsets.only(left: 12, top: 8, bottom: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: DropdownSearch<Location>(
-                        validator: (value) {
-                          if (value == null) {
-                            return '* Required';
-                          } else {
-                            return null;
-                          }
-                        },
-                        errorBuilder: (BuildContext context, value, index) {
-                          return Center(
-                            child: Text(
-                              'No Data',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
+                          const EdgeInsets.only(left: 30, right: 30, top: 30),
+                      child: Text(
+                        'Select Location',
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                              fontSize: 20,
                             ),
-                          );
-                        },
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: 'Select Location',
-                          labelStyle: Theme.of(context).textTheme.bodyText1,
-                          isCollapsed: true,
-                          border: InputBorder.none,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10, left: 30, right: 20, bottom: 5),
+                      child: Container(
+                        padding:
+                            const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset: const Offset(
+                                  0, 2), // changes position of shadow
+                            ),
+                          ],
                         ),
-                        popupTitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
+                        child: DropdownSearch<Location>(
+                          validator: (value) {
+                            if (value == null) {
+                              return '* Required';
+                            } else {
+                              return null;
+                            }
+                          },
+                          errorBuilder: (BuildContext context, value, index) {
+                            return Center(
                               child: Text(
-                                'Select Location',
-                                style: Theme.of(context).textTheme.bodyText2,
+                                'No Data',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                      fontSize: 12,
+                                    ),
+                              ),
+                            );
+                          },
+                          dropdownSearchDecoration: InputDecoration(
+                            labelText: 'Select Location',
+                            labelStyle: Theme.of(context).textTheme.bodyText1,
+                            isCollapsed: true,
+                            border: InputBorder.none,
+                          ),
+                          popupTitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  'Select Location',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                              ),
+                            ],
+                          ),
+                          popupBackgroundColor: const Color(0xFFEDF1F4),
+                          dropDownButton: const Icon(
+                            FontAwesomeIcons.angleDown,
+                            color: Color(0xFF457B9D),
+                          ),
+                          showSearchBox: true,
+                          mode: Mode.DIALOG,
+                          onFind: (filter) async {
+                            var response = await Dio().get(locationRoute,
+                                options: Options(headers: {
+                                  'Accept': '*/*',
+                                  'Content-Type': 'application/json',
+                                  'Authorization': 'Bearer ${widget.token}'
+                                }));
+                            var models =
+                                Location.fromJsonList(response.data['data']);
+                            return models;
+                          },
+                          onChanged: (data) {
+                            setState(() {
+                              location = data?.name;
+                              locationID = data?.id;
+                            });
+                            // print(data);
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 20),
+                      child: SizedBox(
+                        height: 0.5,
+                        // width: 300,
+                        child: Container(
+                          color: Colors.black38,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10, left: 30, right: 30, bottom: 20),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(7)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                child: Center(
+                                  child: Icon(
+                                    Icons.pin_drop_outlined,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor: Color(0xFF1D3557),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                // getUserLocation();
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      'Please select location above',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
+                                            fontSize: constraints.maxWidth < 768
+                                                ? 13
+                                                : 17,
+                                          ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8, top: 4),
+                                    child: Text(
+                                      location != null
+                                          ? location!
+                                          : 'Select Location First',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
+                                            color: Colors.black26,
+                                            fontSize: constraints.maxWidth < 768
+                                                ? 13
+                                                : 17,
+                                          ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        popupBackgroundColor: const Color(0xFFEDF1F4),
-                        dropDownButton: const Icon(
-                          FontAwesomeIcons.angleDown,
-                          color: Color(0xFF457B9D),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Center(
+                        child: PrimaryButton(
+                          text: 'Next',
+                          onTap: () {
+                            service.setInterest(
+                              location: locationID.toString(),
+                              category: widget.categoryID.toString(),
+                              keywords: widget.keywords,
+                              token: widget.token,
+                              fullname: widget.fullname,
+                              context: context,
+                            );
+                          },
                         ),
-                        showSearchBox: true,
-                        mode: Mode.DIALOG,
-                        onFind: (filter) async {
-                          var response = await Dio().get(locationRoute,
-                              options: Options(headers: {
-                                'Accept': '*/*',
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ${widget.token}'
-                              }));
-                          var models =
-                              Location.fromJsonList(response.data['data']);
-                          return models;
-                        },
-                        onChanged: (data) {
-                          setState(() {
-                            location = data?.name;
-                            locationID = data?.id;
-                          });
-                          // print(data);
-                        },
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 20),
-                    child: SizedBox(
-                      height: 0.5,
-                      // width: 300,
-                      child: Container(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10, left: 30, right: 30, bottom: 20),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(7)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              child: Center(
-                                child: Icon(
-                                  Icons.pin_drop_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              backgroundColor: Color(0xFF1D3557),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              // getUserLocation();
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8),
-                                  child: Text(
-                                    'Please select location above',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .copyWith(
-                                          fontSize: 13,
-                                        ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8, top: 4),
-                                  child: Text(
-                                    location != null
-                                        ? location!
-                                        : 'Select Location First',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .copyWith(
-                                          color: Colors.black26,
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: Center(
-                      child: PrimaryButton(
-                        text: 'Next',
-                        onTap: () {
-                          service.setInterest(
-                            location: locationID.toString(),
-                            category: widget.categoryID.toString(),
-                            keywords: widget.keywords,
-                            token: widget.token,
-                            fullname: widget.fullname,
-                            context: context,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

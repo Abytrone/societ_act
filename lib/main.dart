@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        // statusBarColor is used to set Status bar color in Android devices.
+        // statusBarColor: kContentColorLightTheme,
+
+        // To make Status bar icons color white in Android devices.
+        statusBarIconBrightness: Theme.of(context).brightness,
+
+        // statusBarBrightness is used to set Status bar icon color in iOS.
+        statusBarBrightness: Theme.of(context).brightness,
+        // Here light means dark color Status bar icons.
+      ),
+    );
     return GetMaterialApp(
       initialBinding: ControllerBindings(),
       debugShowCheckedModeBanner: false,
@@ -71,7 +85,7 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 /// Component UI
@@ -110,80 +124,77 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void didChangeDependencies() {
     precacheImage(
-        Image.asset('assets/lucas-andrade-docd4KR_f2M-unsplash.jpg').image,
+        Image.asset('assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg').image,
         context);
     super.didChangeDependencies();
   }
 
-  /// Declare startTime to InitState
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   startTime();
-  // }
   /// Code Create UI Splash Screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        /// Set Background image in splash screen layout (Click to open code)
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: Image.asset('assets/lucas-andrade-docd4KR_f2M-unsplash.jpg')
-                .image,
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Container(
-          /// Set gradient black in image splash screen (Click to open code)
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color.fromRGBO(0, 0, 0, 0.3),
-                Color.fromRGBO(0, 0, 0, 0.4)
-              ],
-              begin: FractionalOffset.topCenter,
-              end: FractionalOffset.bottomCenter,
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          /// Set Background image in splash screen layout (Click to open code)
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image:
+                  Image.asset('assets/vanessa-serpas-47_VDec63Mg-unsplash.jpg')
+                      .image,
+              fit: BoxFit.cover,
             ),
           ),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.only(top: 30.0),
-                  ),
-
-                  /// Text header "Welcome To" (Click to open code)
-                  Text(
-                    "Welcome to",
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                  ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-
-                  /// Animation text Duapa Shop to choose Login with Hero Animation (Click to open code)
-                  Text(
-                    "SOCIETY ACTS",
-                    style: GoogleFonts.bebasNeue(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  )
+          child: Container(
+            /// Set gradient black in image splash screen (Click to open code)
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromRGBO(0, 0, 0, 0.3),
+                  Color.fromRGBO(0, 0, 0, 0.4)
                 ],
+                begin: FractionalOffset.topCenter,
+                end: FractionalOffset.bottomCenter,
+              ),
+            ),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                    ),
+
+                    /// Text header "Welcome To" (Click to open code)
+                    Text(
+                      "Welcome to",
+                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: Colors.white,
+                            fontSize: constraints.maxWidth < 768 ? 20 : 40,
+                          ),
+                    ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    /// Animation text Duapa Shop to choose Login with Hero Animation (Click to open code)
+                    Text(
+                      "SOCIETY ACTS",
+                      style: GoogleFonts.bebasNeue(
+                        color: Colors.white,
+                        fontSize: constraints.maxWidth < 768 ? 40 : 60,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class InputField extends StatelessWidget {
-  const InputField(
-      {Key? key,
-      // this.icon,
-      this.sufIcon,
-      required this.label,
-      required this.hintText,
-      this.inputType,
-      this.controller,
-      required this.obscureText,
-      required this.textCapitalization,
-      // this.deco,
-      this.validator,
-      this.maxLines,
-      this.enabled})
-      : super(key: key);
+  const InputField({
+    Key? key,
+    // this.icon,
+    this.sufIcon,
+    required this.label,
+    required this.hintText,
+    this.inputType,
+    this.controller,
+    required this.obscureText,
+    required this.textCapitalization,
+    // this.deco,
+    this.validator,
+    this.maxLines,
+    this.enabled,
+    required this.constraints,
+  }) : super(key: key);
 
   // final IconData? icon;
   final IconButton? sufIcon;
@@ -29,6 +30,7 @@ class InputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int? maxLines;
   final bool? enabled;
+  final BoxConstraints constraints;
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +45,14 @@ class InputField extends StatelessWidget {
         enabled: enabled,
         decoration: InputDecoration(
           errorStyle: GoogleFonts.comfortaa(
-            fontSize: 12,
+            fontSize: constraints.maxWidth < 768 ? 12 : 17,
             fontWeight: FontWeight.bold,
             color: const Color(0xFFE63946),
           ),
           label: Text(
             label,
             style: GoogleFonts.comfortaa(
-              fontSize: 15,
+              fontSize: constraints.maxWidth < 768 ? 15 : 25,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1D3557),
             ),
@@ -59,7 +61,7 @@ class InputField extends StatelessWidget {
           suffixIcon: sufIcon,
         ),
         style: GoogleFonts.comfortaa(
-          fontSize: 17,
+          fontSize: constraints.maxWidth < 768 ? 17 : 25,
           color: const Color(0xFF457B9D),
         ),
       ),

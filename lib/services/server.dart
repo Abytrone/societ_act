@@ -1,6 +1,6 @@
 // Base url
-const String baseUrl = 'societyacts.abdulsitech.com';
-const String hostBaseUrl = 'https://societyacts.abdulsitech.com';
+const String baseUrl = 'https://app.societiesact.com';
+const String hostBaseUrl = 'https://app.societiesact.com';
 
 // Routes
 const String loginRoute = '/api/v1/auth/login';
@@ -19,6 +19,6 @@ const String notificationRoute = '/api/v1/user/notifications/all';
 const String emailRoute = '/api/v1/email/resend';
 // Routes with Dio() doesn't accept concatination, hence [baseUrl] with [route]
 const String categoryRoute =
-    'https://societyacts.abdulsitech.com/api/v1/cases/categories/fetch';
+    'https://app.societiesact.com/api/v1/cases/categories/fetch';
 const String locationRoute =
-    'https://societyacts.abdulsitech.com/api/v1/cases/locations/fetch';
+    'https://app.societiesact.com/api/v1/cases/locations/fetch';
