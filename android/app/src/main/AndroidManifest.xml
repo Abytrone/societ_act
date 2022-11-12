@@ -2,7 +2,7 @@
     package="com.aby.society_acts">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="Societ Act"
+        android:label="Societiesact"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
