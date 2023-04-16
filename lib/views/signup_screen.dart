@@ -613,6 +613,9 @@ class _SignupScreenState extends State<SignupScreen> {
       );
       var jsonResponse = jsonDecode(response.body);
 
+      print(response.body);
+      print('------------------------------');
+
       if (response.statusCode == 200) {
         setState(() {
           _isLoading = false;
